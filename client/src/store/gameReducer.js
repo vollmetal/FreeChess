@@ -7,22 +7,37 @@ export const gameReducer = createSlice ({
     initialState: {
         id: "",
         name: "placeholder",
+        clientPlayer: 1,
         playerIds: {player1: '', player2: ''},
-        gamespace: ['this']
+        gameBoard: ['this'],
+        gamePieces: [],
+        spaceModifiers: [],
+        gameState: ''
     },
     reducers: {
         setNewGame: (state, action) => {
-                  state.gamespace = action.payload
-
+                  state.gameBoard = action.payload.gameBoard
+                  state.gamePieces = action.payload.gamePieces
         },
 
-        makePiece: (state, action) => {
-            state.gamespace[action.payload.position].piece = action.payload.piece
-            console.log(state.gamespace[action.payload.position].piece)
+        moveStart: (state, action) => {
+            state.spaceModifiers = action.payload
+            state.gameState = 'clientMoving'
+        },
+
+        moveCancel: (state) => {
+            state.spaceModifiers = []
+            state.gameState = 'clientWaiting'
+        },
+
+        moveFinish: (state, action) => {
+            state.gamePieces[action.payload.movedPiece].position = action.payload.newPosition
+            state.spaceModifiers = []
+            state.gameState = 'otherPlayerTurn'
         }
     }
 })
 
-export const { setNewGame, makePiece } = gameReducer.actions;
+export const { setNewGame, moveStart, moveCancel, moveFinish, makePiece } = gameReducer.actions;
 
 export default gameReducer.reducer;
