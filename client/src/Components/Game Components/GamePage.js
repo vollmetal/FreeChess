@@ -1,23 +1,25 @@
-import { Button, Grid } from "@mui/material"
 import { Box } from "@mui/system"
 import { useEffect, useState } from "react"
+import { useAuthState } from "react-firebase-hooks/auth"
 import { useDispatch, useSelector } from "react-redux"
-import { GridSetup, makeNewGamePieces } from "../constants"
-import { makePiece, setNewGame } from "../store/gameReducer"
-import Bishop from "./Game Components/Bishop"
-import BoardSpace from "./Game Components/BoardPiece"
-import King from "./Game Components/King"
-import Knight from "./Game Components/Knight"
-import Pawn from "./Game Components/Pawn"
-import Queen from "./Game Components/Queen"
-import Rook from "./Game Components/Rook"
-import ValidMove from "./Game Components/ValidMove"
+import { GridSetup, makeNewGamePieces } from "../../constants"
+import { auth } from "../../firestore"
+import { setNewGame } from "../../store/gameReducer"
+import Bishop from "./Pieces/Bishop"
+import King from "./Pieces/King"
+import Knight from "./Pieces/Knight"
+import Pawn from "./Pieces/Pawn"
+import Queen from "./Pieces/Queen"
+import Rook from "./Pieces/Rook"
+import ValidMove from "./ValidMove"
 
 
 
 
 
 const GamePage = () => {
+
+    const [user, loading, error] = useAuthState(auth)
 
     const gameState = useSelector(state => state.game)
     const dispatch = useDispatch()
@@ -127,13 +129,13 @@ const GamePage = () => {
         setGameBoard({
             gameBoardElements
         })
-        dispatch(setNewGame({ gameBoard: grid, gamePieces: pieces }))
+        dispatch(setNewGame({ gameBoard: grid, gamePieces: pieces}))
     }
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <label>This is the Game Page</label>
-            <Box sx={{ aspectRatio: '1/1', borderStyle: 'solid', display: 'grid', gridTemplateRows: 'repeat(8, 128px)', gridTemplateColumns: 'repeat(8, 128px)', justifyItems: 'stretch' }}>
+            <Box sx={{borderStyle: 'solid', display: 'grid', gridTemplateRows: 'repeat(8, minmax(10px, 1fr))', gridTemplateColumns: 'repeat(8, minmax(10px, 1fr))', justifyItems: 'stretch', height: '100%', width: '100%' }}>
                 {gameBoard ? gameBoard.gameBoardElements : null}
 
             </Box>

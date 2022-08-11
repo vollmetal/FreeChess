@@ -1,20 +1,22 @@
 import Header from "./Header";
 import { Box } from "@mui/material"
-import GamePage from "./GamePage";
+import { useEffect } from "react";
+import { auth, provider } from "../firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 
 
 
 
-const PageBase = () => {
+function PageBase(props) {
 
     return (
         <Box>
-            <Header/>
-            <GamePage/>
+            <Header />
+            {props.children}
         </Box>
-        
-    )
+
+    );
 
 }
 

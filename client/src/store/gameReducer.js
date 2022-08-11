@@ -7,8 +7,16 @@ export const gameReducer = createSlice ({
     initialState: {
         id: "",
         name: "placeholder",
-        clientPlayer: 1,
-        playerIds: {player1: '', player2: ''},
+        playerTurn: 1,
+        players: [{
+            id: '',
+            score: 0,
+            clientPlayer: false
+        }, {
+            id: '',
+            score: 0,
+            clientPlayer: false
+        }],
         gameBoard: ['this'],
         gamePieces: [],
         spaceModifiers: [],
@@ -34,10 +42,18 @@ export const gameReducer = createSlice ({
             state.gamePieces[action.payload.movedPiece].position = action.payload.newPosition
             state.spaceModifiers = []
             state.gameState = 'otherPlayerTurn'
+        },
+
+        setClientPlayer: (state, action) => {
+            if(state.players[0].id == action.payload.id) {
+                state.players[0].clientPlayer = true
+            } else if(state.players[1].id == action.payload.id) {
+                state.players[1].clientPlayer = true
+            }
         }
     }
 })
 
-export const { setNewGame, moveStart, moveCancel, moveFinish, makePiece } = gameReducer.actions;
+export const { setNewGame, moveStart, moveCancel, moveFinish, makePiece, setClientPlayer } = gameReducer.actions;
 
 export default gameReducer.reducer;

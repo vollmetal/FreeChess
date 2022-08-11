@@ -1,8 +1,8 @@
 import { Box, Button } from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
-import { getSquareIndexFromCoords } from "../../boardManagement"
-import { blackPieceImgPath, imagePath, piecePath } from "../../constants"
-import { moveCancel, moveStart, selectPiece } from "../../store/gameReducer"
+import { getSquareIndexFromCoords } from "../../../boardManagement"
+import { blackPieceImgPath, imagePath, piecePath } from "../../../constants"
+import { moveCancel, moveStart, selectPiece } from "../../../store/gameReducer"
 
 
 
@@ -132,10 +132,11 @@ const Bishop = (props) => {
 
     return (<Box>
         {props.player == gameState.clientPlayer ? <Button onClick={movePiece}>
-       <Box component="img"
+    <Box sx={{height: '100%', width: '100%'}} component="img"
        alt="placeholder"
        src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${blackPieceImgPath}/b_Bishop.png`}/>
-     </Button>: <Box component="img"
+     </Button>: <Box sx={{height: '100%', width: '100%'}}
+      component="img"
        alt="placeholder"
        src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${blackPieceImgPath}/b_Bishop.png`}/>}
        </Box>

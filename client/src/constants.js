@@ -38,15 +38,13 @@ export const makeNewGamePieces = (x, y) => {
     let outputPieces = []
     let currentX = 1
     let currentY = 1
-    let player = 1
-    let piece = ''
     while (currentY < y) {
         let player = 1
         let piece = ''
         if (currentY == 1 || currentY == 2) {
-            player = 1
+            player = 0
         } else {
-            player = 2
+            player = 1
         }
 
         while (currentX < x) {
