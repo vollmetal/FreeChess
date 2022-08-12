@@ -45,25 +45,51 @@ const Pawn = (props) => {
         }
         while (spaceY <= 2) {
             if (props.player == 1) {
-                tempSpace = movePosition((spaceX + gameState.gamePieces[props.id].position.x), (spaceY + gameState.gamePieces[props.id].position.y))
-                if (tempSpace.catch) {
-                    break;
-                } else {
-                    if(tempSpace.space) {
-                        console.log(tempSpace)
-                        moveSpaces.push(tempSpace.space)
+                if (gameState.gamePieces[props.id].position.y == 2) {
+                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (spaceY + gameState.gamePieces[props.id].position.y))
+                    if (tempSpace.catch) {
+                        break;
+                    } else {
+                        if (tempSpace.space) {
+                            console.log(tempSpace)
+                            moveSpaces.push(tempSpace.space)
+                        }
+
                     }
-                    
+                } else {
+                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (1 + gameState.gamePieces[props.id].position.y))
+                    if (tempSpace.catch) {
+                        break;
+                    } else {
+                        if (tempSpace.space) {
+                            console.log(tempSpace)
+                            moveSpaces.push(tempSpace.space)
+                        }
+
+                    }
                 }
+
             } else {
-                tempSpace = movePosition((spaceX + gameState.gamePieces[props.id].position.x), (gameState.gamePieces[props.id].position.y - spaceY))
-                if (tempSpace.catch) {
-                    break;
+                if (gameState.gamePieces[props.id].position.y == 7) {
+                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (gameState.gamePieces[props.id].position.y - spaceY))
+                    if (tempSpace.catch) {
+                        break;
+                    } else {
+                        if (tempSpace.space) {
+                            moveSpaces.push(tempSpace.space)
+                        }
+                    }
                 } else {
-                    if(tempSpace.space) {
-                        moveSpaces.push(tempSpace.space)
+                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (gameState.gamePieces[props.id].position.y - 1))
+                    if (tempSpace.catch) {
+                        break;
+                    } else {
+                        if (tempSpace.space) {
+                            moveSpaces.push(tempSpace.space)
+                        }
                     }
                 }
+
             }
 
             spaceY++
@@ -71,6 +97,8 @@ const Pawn = (props) => {
 
         ////////////////////CAPTURE SPACES////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////
+
+
         if (props.player == 1) {
             let targetPosition = { x: (1 + gameState.gamePieces[props.id].position.x), y: (1 + gameState.gamePieces[props.id].position.y) }
             let targetSpace = getSquareIndexFromCoords(targetPosition, gameState.gameBoard)
@@ -79,7 +107,7 @@ const Pawn = (props) => {
             if (targetSpace != -1) {
                 if (targetPiece != -1) {
                     if (gameState.gamePieces[targetPiece].player != props.player) {
-                        moveSpaces.push ({ position: targetPosition, type: 'Capture', id: props.id })
+                        moveSpaces.push({ position: targetPosition, type: 'Capture', id: props.id })
                     } else {
                     }
                 }
@@ -92,7 +120,7 @@ const Pawn = (props) => {
             if (targetSpace != -1) {
                 if (targetPiece != -1) {
                     if (gameState.gamePieces[targetPiece].player != props.player) {
-                        moveSpaces.push ({ position: targetPosition, type: 'Capture', id: props.id })
+                        moveSpaces.push({ position: targetPosition, type: 'Capture', id: props.id })
                     } else {
                     }
                 }
@@ -106,7 +134,7 @@ const Pawn = (props) => {
             if (targetSpace != -1) {
                 if (targetPiece != -1) {
                     if (gameState.gamePieces[targetPiece].player != props.player) {
-                        moveSpaces.push ({ position: targetPosition, type: 'Capture', id: props.id })
+                        moveSpaces.push({ position: targetPosition, type: 'Capture', id: props.id })
                     } else {
                     }
                 }
@@ -119,7 +147,7 @@ const Pawn = (props) => {
             if (targetSpace != -1) {
                 if (targetPiece != -1) {
                     if (gameState.gamePieces[targetPiece].player != props.player) {
-                        moveSpaces.push ({ position: targetPosition, type: 'Capture', id: props.id })
+                        moveSpaces.push({ position: targetPosition, type: 'Capture', id: props.id })
                     } else {
                     }
                 }
@@ -131,13 +159,13 @@ const Pawn = (props) => {
     }
 
     return (<Box>
-        {props.player == gameState.clientPlayer ? <Button onClick={movePiece}>
-            <Box sx={{height: '100%', width: '100%'}}
-             component="img"
+        {props.player == gameState.clientPlayer && gameState.playerTurn == props.player ? <Button sx={{ height: '100%', width: '100%' }} onClick={movePiece}>
+            <Box sx={{ height: '100%', width: '100%' }}
+                component="img"
                 alt="placeholder"
                 src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${blackPieceImgPath}/b_Pawn.png`} />
-        </Button> : <Box sx={{height: '100%', width: '100%'}}
-         component="img"
+        </Button> : <Box sx={{ height: '100%', width: '100%' }}
+            component="img"
             alt="placeholder"
             src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${blackPieceImgPath}/b_Pawn.png`} />}
     </Box>

@@ -10,6 +10,9 @@ import GamePage from './Components/Game Components/GamePage';
 import store from './store/store';
 import Login from './Components/Login';
 import GameLobby from './Components/GameLobby';
+import NewGame from './Components/NewGame';
+import GameList from './Components/GameList';
+import Registration from './Components/Registration';
 
 
 
@@ -21,9 +24,11 @@ root.render(
     <PageBase>
       <Routes>
           <Route path='/' element = {<MainPage />}/>
-          <Route path='/game' element = {<GameLobby/>}/>
+          <Route path='/game' element = {<GameList/>}/>
+          <Route path='/newGame' element = {<NewGame />} />
           <Route path='/login' element = {<Login/>}/>
-          <Route path='/lobby' element = {<GameLobby />} />
+          <Route path='/registration' element = {<Registration />} />
+          <Route path='/lobby/:gameId' element = {<GameLobby />} />
       </Routes>
     </PageBase>
     </Provider>

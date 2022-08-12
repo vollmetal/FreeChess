@@ -17,7 +17,7 @@ import ValidMove from "./ValidMove"
 
 
 
-const GamePage = () => {
+const GamePage = (props) => {
 
     const [user, loading, error] = useAuthState(auth)
 
@@ -31,7 +31,6 @@ const GamePage = () => {
         let isRunning = true
 
         makeBoardElements()
-        console.log(gameBoard)
         return () => {
             isRunning = false
         }
@@ -39,29 +38,19 @@ const GamePage = () => {
 
     const makeBoardElements = () => {
 
-        let grid = []
-        let pieces = []
-        let movesets = []
-        console.log(`Game Pieces in Redux - ${gameState.gamePieces.length} || Game Board in Redux - ${gameState.gameBoard.length}`)
+        let grid = gameState.gamePieces
+        let pieces = props.gameInfo.boardPieces
+        let movesets = gameState.spaceModifiers
 
         if (gameState.gamePieces.length > 2) {
             pieces = gameState.gamePieces
-            console.log('LOADING FROM REDUX')
-        } else {
-            pieces = makeNewGamePieces(9, 9)
-            console.log('MAKING NEW BOARD')
         }
 
         if (gameState.gameBoard.length > 2) {
             grid = gameState.gameBoard
-            console.log('LOADING FROM REDUX')
-        } else {
-            grid = GridSetup(9, 9)
-            console.log('MAKING NEW BOARD')
         }
         if (gameState.spaceModifiers.length > 0) {
             movesets = gameState.spaceModifiers
-            console.log(gameState.spaceModifiers)
         }
         const gameBoardElements = []
 
@@ -129,7 +118,6 @@ const GamePage = () => {
         setGameBoard({
             gameBoardElements
         })
-        dispatch(setNewGame({ gameBoard: grid, gamePieces: pieces}))
     }
 
     return (

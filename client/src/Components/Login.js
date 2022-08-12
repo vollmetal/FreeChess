@@ -1,18 +1,15 @@
-import { Button, Card } from '@mui/material';
+import { Button, Card, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useNavigate } from 'react-router-dom';
-import { auth, signInWithGoogle } from '../firestore';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { auth, logInWithEmailAndPassword, signInWithGoogle } from '../firestore';
 
 
 const Login = (props) => {
 
     const [loginCredentials, setLoginCredentials] = useState()
     const [user, loading, error] = useAuthState(auth)
-    const navigate = useNavigate()
-
-    const dispatch = useDispatch()
 
     useEffect(() => {
         if(loading) {
@@ -30,13 +27,15 @@ const Login = (props) => {
         })
     }
 
-    const googleLogin = () => {
-
-    }
-
     return (
         <Card>
-            <Button variant='contained' onClick={signInWithGoogle}>Login</Button>
+            <Card>
+                <TextField onChange={updateCredentials} id="outlined-basic" helperText="Email" name='email' variant="outlined" />
+                <TextField type='password' onChange={updateCredentials} id="outlined-basic" helperText="Password" name='password' variant="outlined" />
+                <Button variant='contained' onClick={() => {logInWithEmailAndPassword(loginCredentials.email, loginCredentials.password)}}>Login with Email and Password</Button>
+            </Card>
+            <Button variant='contained' onClick={signInWithGoogle}>Login with Google account</Button>
+            <NavLink to='/registration'><Button variant='contained' >Register for a new account here if you don't have one</Button></NavLink>
         </Card>
     )
 

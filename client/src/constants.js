@@ -5,6 +5,8 @@ export const piecePath = 'piece icons'
 
 export const blackPieceImgPath = 'black'
 
+export const SERVER_PATH = 'http://localhost:4200'
+
 export const GridSetup = (x, y) => {
     let outputGrid = []
     let currentX = 1
@@ -42,9 +44,9 @@ export const makeNewGamePieces = (x, y) => {
         let player = 1
         let piece = ''
         if (currentY == 1 || currentY == 2) {
-            player = 0
-        } else {
             player = 1
+        } else {
+            player = 2
         }
 
         while (currentX < x) {

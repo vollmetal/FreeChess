@@ -68,7 +68,7 @@ const Knight = (props) => {
     }
 
     return (<Box>
-        {props.player == gameState.clientPlayer ? <Button onClick={movePiece}>
+        {props.player == gameState.clientPlayer && gameState.playerTurn == props.player ? <Button onClick={movePiece}>
        <Box sx={{height: '100%', width: '100%'}}
         component="img"
        alt="placeholder"

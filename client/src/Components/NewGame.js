@@ -1,0 +1,75 @@
+import { Button, Card, FormControl, FormControlLabel, FormLabel, Input, Radio, RadioGroup, TextField } from "@mui/material";
+import { Box } from "@mui/system";
+import { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useNavigate } from "react-router-dom";
+import { makeNewGamePieces, SERVER_PATH } from "../constants";
+import { auth } from "../firestore";
+import GamePage from "./Game Components/GamePage";
+
+
+
+
+const NewGame = () => {
+    const [user, loading, error] = useAuthState(auth)
+
+    const [newGameInfo, setNewGameInfo] = useState({boardPieces: makeNewGamePieces(9, 9), players: {
+        1: {
+            uid: '',
+            name: '',
+            score: 0
+        }, 2: {
+            uid: '',
+            name: '',
+            score: 0
+     }}})
+    
+
+    const navigate = useNavigate()
+
+    const onTextChange = (e) => {
+        setNewGameInfo({
+            ...newGameInfo,
+            gameName: e.target.value
+        })
+    }
+
+    const createGame = async () => {
+        const result = await fetch(`${SERVER_PATH}/game/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newGameInfo)
+        })
+        const sanitizedResult = await result.json()
+        if(sanitizedResult.success) {
+            console.log(sanitizedResult.message)
+            navigate('/game')
+        }
+    }
+
+    return (
+        <Box>
+            <Card sx={{ padding: '20px' }}>
+                <Box>
+                    <TextField onChange={onTextChange} id="outlined-basic" helperText="Game Name" name='gameName' variant="outlined" />
+                    <FormControl>
+                        <FormLabel id="playerSide">Which side do you want to play?</FormLabel>
+                        <RadioGroup
+                            row
+                            name="playerSide"
+                        >
+                            <FormControlLabel value="White" control={<Radio />} label="White" />
+                            <FormControlLabel value="Black" control={<Radio />} label="Black" />
+                        </RadioGroup>
+                    </FormControl>
+                </Box>
+                <Button onClick={createGame} variant="contained">Create Game</Button>
+            </Card>
+        </Box>
+    )
+
+}
+
+export default NewGame;
