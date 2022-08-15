@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { NavLink, useNavigate } from 'react-router-dom'
+import { socket } from "..";
 import { auth, logout } from "../firestore";
 
 
@@ -9,7 +10,9 @@ import { auth, logout } from "../firestore";
 const Header = () => {
     const [user, loading, error] = useAuthState(auth)
 
-
+    socket.on('connect', (arg) => {
+        
+    })
 
     return (
         <Box>

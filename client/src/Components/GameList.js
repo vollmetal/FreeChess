@@ -1,14 +1,18 @@
 import { Button, Card, CardActionArea, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { NavLink, useNavigate } from "react-router-dom";
+import { socket } from "..";
 import { SERVER_PATH } from "../constants";
+import { auth } from "../firestore";
 
 
 
 
 const GameList = () => {
 
+    const [user, loading, error] = useAuthState(auth)
     const [gettingInfo, setGettingInfo] = useState(true)
     const [gameList, setGameList] = useState([])
     const navigate = useNavigate()
@@ -37,6 +41,7 @@ const GameList = () => {
         const result = await fetch(`${SERVER_PATH}/game/join/${gameId}`)
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
+            socket.emit('joinRoom', {uid: user.uid, name: user.displayName, roomId: gameId})
             navigate(`/lobby/${gameId}`)
         } else {
             console.log(sanitizedResult.message)
@@ -47,6 +52,7 @@ const GameList = () => {
         const listElements = list.map(game => {
             return (<Box key={`id-${game._id}`}>
                 <Typography>{game.name}</Typography>
+                <Typography>Current Players: {game.currentPlayers}</Typography> 
                 <Button onClick={() => {joinGame(game._id)}}>Join Game</Button>
             </Box>)
         })

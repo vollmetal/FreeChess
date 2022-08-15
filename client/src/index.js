@@ -14,6 +14,13 @@ import NewGame from './Components/NewGame';
 import GameList from './Components/GameList';
 import Registration from './Components/Registration';
 
+import { io } from "socket.io-client";
+import { SERVER_PATH } from './constants';
+
+
+export const socket = io('http://localhost:4201');
+socket.connect()
+
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

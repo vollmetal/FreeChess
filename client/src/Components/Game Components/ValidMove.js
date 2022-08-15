@@ -13,15 +13,17 @@ const ValidMove = (props) => {
     const dispatch = useDispatch()
 
     const movePiece = async () => {
-        dispatch(moveFinish({movedPiece: props.movePiece, newPosition: props.position}))
-        const newPositions = gameState.gamePieces.map(piece => {
+        const newPositions = await gameState.gamePieces.map(piece => {
             console.log(piece)
             if(piece.position.x == gameState.gamePieces[props.movePiece].position.x && piece.position.y == gameState.gamePieces[props.movePiece].position.y) {
-                return {position: props.position, piece: piece.piece, player: piece.player}
+                return {position: props.position, piece: piece.piece, player: piece.player, capture: false}
             } else {
                 return piece
             }
         })
+        dispatch(moveFinish(newPositions))
+        console.log(gameState.gamePieces)
+        
         const result = await fetch(`${SERVER_PATH}/game/move/${gameState.id}`, {
             method: 'POST',
             headers: {
@@ -34,7 +36,7 @@ const ValidMove = (props) => {
     }
 
     return (
-        <Button sx={{borderStyle: 'solid', borderColor: 'green'}} onClick={movePiece}>VALID</Button>
+        <Button sx={{borderStyle: 'solid', borderColor: 'green', borderWidth: '4px', height: '100%', width: '100%'}} onClick={movePiece}></Button>
     )
 }
 

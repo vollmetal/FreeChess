@@ -1,9 +1,21 @@
 const express = require('express');
+const Connection = require('../schemas/connections');
 const gameRouter = express.Router();
 const Game = require('../schemas/game');
 
+
 gameRouter.get('/', (req, res) => {
 
+})
+
+io.on('connection', async (socket) => {
+    console.log('connected!')
+    socket.on('joinRoom', (args) => {
+        console.log(args)
+        socket.join(`room - ${args.roomId}`)
+        console.log(socket.rooms)
+    })
+    
 })
 
 gameRouter.post('/new', async (req, res) => {
@@ -141,10 +153,11 @@ gameRouter.post('/move/:gameId', async (req, res) => {
                 newTurn = 1
             }
             
-            const updatedGame = await game.updateOne({
+            const gameUpdate = await game.updateOne({
                 boardPieces: move,
                 playerTurn: newTurn
             })
+            io.to(`room - ${req.params.gameId}`).emit('updateRoom')
             res.json({ success: true, message: 'move successfully made!', currentData: updatedGame})
         } catch {
             res.json({ success: false, message: 'ERROR: failed to fetch game info 2!', currentData: req.body.move })

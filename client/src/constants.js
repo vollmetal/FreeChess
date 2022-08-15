@@ -126,7 +126,7 @@ export const makeNewGamePieces = (x, y) => {
                     break;
             }
             if (piece != '') {
-                outputPieces.push({ position: { x: currentX, y: currentY }, piece: piece, player: player })
+                outputPieces.push({ position: { x: currentX, y: currentY }, piece: piece, player: player, capture: false })
             }
 
             currentX++;

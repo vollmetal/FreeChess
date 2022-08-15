@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { socket } from "..";
 import { GridSetup, SERVER_PATH } from "../constants";
 import { auth } from "../firestore";
 import { setNewGame } from "../store/gameReducer";
@@ -14,24 +15,36 @@ import GamePage from "./Game Components/GamePage";
 
 const GameLobby = () => {
     const [isPlayer, setIsPlayer] = useState(false)
+    const [isLoading, setLoading] = useState(false)
     const [gameInfo, setGameInfo] = useState({})
     const [user, loading, error] = useAuthState(auth)
+
+    let rendered = false
 
     const { gameId } = useParams()
 
     const gameState = useSelector(state => state.game)
     const dispatch = useDispatch()
 
+    
+    socket.on('updateRoom', () => {
+        if(isLoading) {
+            setLoading(false)
+        } else {
+            setLoading(true)
+        }
+    })
+
+    
 
     useEffect(() => {
         let isRunning = true
         fetchGameInfo()
-
         return () => {
             isRunning = false
         }
 
-    }, [user])
+    }, [user, isLoading])
 
     const fetchGameInfo = async () => {
         const results = await fetch(`${SERVER_PATH}/game/loadGame/${gameId}`)
@@ -60,6 +73,7 @@ const GameLobby = () => {
 
         }
     }
+
 
     const joinAsPlayer = async (player) => {
         const data = {

@@ -6,7 +6,11 @@ const server = http.createServer(app);
 global.mongoose = require('mongoose')
 global.bcrypt = require('bcryptjs')
 const { Server } = require("socket.io");
-global.io = new Server(server);
+global.io = new Server(server, {
+    cors: {
+      origin: "*"
+    }
+  });
 
 app.use(express.json())
 app.use(cors())
@@ -29,9 +33,9 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS
         }
     })
 
-    io.on('connection', (socket) => {
-        console.log('a user connected');
-      });
+    
+
+      server.listen(4201);
 
 app.listen(PORT, () => {
     console.log('server start!')

@@ -64,22 +64,22 @@ const GamePage = (props) => {
                     let tmp = null
                     switch (piece.piece) {
                         case 'Pawn':
-                            tmp = <Pawn id={index} player={piece.player} />
+                            tmp = <Pawn id={index} player={piece.player} capture={piece.capture} />
                             break;
                         case 'Rook':
-                            tmp = <Rook id={index} player={piece.player} />
+                            tmp = <Rook id={index} player={piece.player} capture={piece.capture} />
                             break;
                         case 'Knight':
-                            tmp = <Knight id={index} player={piece.player} />
+                            tmp = <Knight id={index} player={piece.player} capture={piece.capture} />
                             break;
                         case 'Bishop':
-                            tmp = <Bishop id={index} player={piece.player} />
+                            tmp = <Bishop id={index} player={piece.player} capture={piece.capture} />
                             break;
                         case 'Queen':
-                            tmp = <Queen id={index} player={piece.player} />
+                            tmp = <Queen id={index} player={piece.player} capture={piece.capture} />
                             break;
                         case 'King':
-                            tmp = <King id={index} player={piece.player} />
+                            tmp = <King id={index} player={piece.player} capture={piece.capture} />
                             break;
 
                         default:
@@ -121,9 +121,9 @@ const GamePage = (props) => {
     }
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: '75%'}}>
             <label>This is the Game Page</label>
-            <Box sx={{borderStyle: 'solid', display: 'grid', gridTemplateRows: 'repeat(8, minmax(10px, 1fr))', gridTemplateColumns: 'repeat(8, minmax(10px, 1fr))', justifyItems: 'stretch', height: '100%', width: '100%' }}>
+            <Box sx={{borderStyle: 'solid', display: 'grid', gridTemplateRows: 'repeat(8, minmax(2px, 1fr))', gridTemplateColumns: 'repeat(8, minmax(2px, 1fr))', justifyItems: 'stretch', height: '100%', width: '100%' }}>
                 {gameBoard ? gameBoard.gameBoardElements : null}
 
             </Box>

@@ -6,7 +6,8 @@ export const userReducer = createSlice ({
     initialState: {
         email: '',
         username: '',
-        photoURL: ''
+        photoURL: '',
+        playerPiece: ['white', 'black']
     },
     reducers: {
         login: (state, action) => {

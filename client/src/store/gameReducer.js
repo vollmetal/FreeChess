@@ -18,6 +18,7 @@ export const gameReducer = createSlice ({
         }],
         gameBoard: ['this'],
         gamePieces: [],
+        movePiece: 0,
         spaceModifiers: [],
         gameState: ''
     },
@@ -34,17 +35,26 @@ export const gameReducer = createSlice ({
         },
 
         moveStart: (state, action) => {
-            state.spaceModifiers = action.payload
+            state.spaceModifiers = action.payload.emptySpaces
+            state.gamePieces = action.payload.captureSpaces
+            state.movePiece = action.payload.id
             state.gameState = 'clientMoving'
         },
 
         moveCancel: (state) => {
             state.spaceModifiers = []
+            state.movePiece = 0
+            state.gamePieces = state.gamePieces.map(piece => {
+                return {position: piece.position, piece: piece.piece, player: piece.player, capture: false}
+            })
             state.gameState = 'clientWaiting'
         },
 
         moveFinish: (state, action) => {
-            state.gamePieces[action.payload.movedPiece].position = action.payload.newPosition
+            
+            console.log(state.gamePieces)
+            state.gamePieces = action.payload
+            state.movePiece = 0
             state.spaceModifiers = []
             if(state.playerTurn == 1) {
                 state.playerTurn = 2
