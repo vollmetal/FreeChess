@@ -1,8 +1,7 @@
 import { Button, Card, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { NavLink } from 'react-router-dom';
-import { auth, registerWithEmailAndPassword } from '../firestore';
+import { auth, registerWithEmailAndPassword } from '../Functions/firestore';
 
     
 

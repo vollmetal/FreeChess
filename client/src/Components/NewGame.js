@@ -1,11 +1,10 @@
-import { Button, Card, FormControl, FormControlLabel, FormLabel, Input, Radio, RadioGroup, TextField } from "@mui/material";
+import { Button, Card, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { makeNewGamePieces, SERVER_PATH } from "../constants";
-import { auth } from "../firestore";
-import GamePage from "./Game Components/GamePage";
+import { auth } from "../Functions/firestore";
 
 
 

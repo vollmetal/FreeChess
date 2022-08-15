@@ -1,9 +1,8 @@
 import { Button, Card, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { NavLink, useNavigate } from 'react-router-dom';
-import { auth, logInWithEmailAndPassword, signInWithGoogle } from '../firestore';
+import { NavLink } from 'react-router-dom';
+import { auth, logInWithEmailAndPassword, signInWithGoogle } from '../Functions/firestore';
 
 
 const Login = (props) => {

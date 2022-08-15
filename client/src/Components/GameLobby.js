@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { socket } from "..";
 import { GridSetup, SERVER_PATH } from "../constants";
-import { auth } from "../firestore";
+import { auth } from "../Functions/firestore";
 import { setNewGame } from "../store/gameReducer";
 import GamePage from "./Game Components/GamePage";
 
@@ -19,11 +19,7 @@ const GameLobby = () => {
     const [gameInfo, setGameInfo] = useState({})
     const [user, loading, error] = useAuthState(auth)
 
-    let rendered = false
-
     const { gameId } = useParams()
-
-    const gameState = useSelector(state => state.game)
     const dispatch = useDispatch()
 
     
@@ -37,14 +33,7 @@ const GameLobby = () => {
 
     
 
-    useEffect(() => {
-        let isRunning = true
-        fetchGameInfo()
-        return () => {
-            isRunning = false
-        }
-
-    }, [user, isLoading])
+    
 
     const fetchGameInfo = async () => {
         const results = await fetch(`${SERVER_PATH}/game/loadGame/${gameId}`)
@@ -59,15 +48,15 @@ const GameLobby = () => {
                 id: sanitizedResults.gameInfo.players[2].uid,
                 score: sanitizedResults.gameInfo.players[2].score
             }]
-            if( sanitizedResults.gameInfo.players[1].uid == user.uid) {
+            if( sanitizedResults.gameInfo.players[1].uid === user.uid) {
                 setIsPlayer(true)
                 clientPlayer = 1
-            } else if (sanitizedResults.gameInfo.players[2].uid == user.uid) {
+            } else if (sanitizedResults.gameInfo.players[2].uid === user.uid) {
                 setIsPlayer(true)
                 clientPlayer = 2
             }
             console.log(clientPlayer)
-            dispatch(setNewGame({ gameBoard: GridSetup(9,9), gamePieces: sanitizedResults.gameInfo.boardPieces, players: players, clientPlayer: clientPlayer, turn: sanitizedResults.gameInfo.playerTurn, id: sanitizedResults.gameInfo._id}))
+            dispatch(setNewGame({ gameBoard: GridSetup(9,9), gamePieces: sanitizedResults.gameInfo.boardPieces, players: players, clientPlayer: clientPlayer, turn: sanitizedResults.gameInfo.playerTurn, id: sanitizedResults.gameInfo._id, name: sanitizedResults.gameInfo.name}))
             setGameInfo(sanitizedResults.gameInfo)
         } else {
 
@@ -96,14 +85,23 @@ const GameLobby = () => {
         }
     }
 
+    useEffect(() => {
+        let isRunning = true
+        fetchGameInfo()
+        return () => {
+            isRunning = false
+        }
+
+    }, [user, isLoading])
+
     return (
         <Box>
             <Card sx={{margin: '20px'}}>
                 {isPlayer ? <Box>
 
                 </Box>: <Box>
-                    {gameInfo.players ? <Button disabled={(gameInfo.players[1].uid != '')} onClick={()=> {joinAsPlayer(1)}} variant="contained">Join as Player 1</Button>: <Skeleton></Skeleton>}
-                    {gameInfo.players ? <Button disabled={(gameInfo.players[2].uid != '')} onClick={()=> {joinAsPlayer(2)}} variant="contained">Join as Player 2</Button>: <Skeleton></Skeleton>}
+                    {gameInfo.players ? <Button disabled={(gameInfo.players[1].uid !== '')} onClick={()=> {joinAsPlayer(1)}} variant="contained">Join as Player 1</Button>: <Skeleton></Skeleton>}
+                    {gameInfo.players ? <Button disabled={(gameInfo.players[2].uid !== '')} onClick={()=> {joinAsPlayer(2)}} variant="contained">Join as Player 2</Button>: <Skeleton></Skeleton>}
                     </Box>}
             </Card>
             <Card sx={{padding: '20px'}}>

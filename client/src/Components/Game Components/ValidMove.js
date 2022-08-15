@@ -21,6 +21,7 @@ const ValidMove = (props) => {
                 return piece
             }
         })
+        console.log(newPositions)
         dispatch(moveFinish(newPositions))
         console.log(gameState.gamePieces)
         

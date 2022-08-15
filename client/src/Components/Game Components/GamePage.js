@@ -1,10 +1,9 @@
+import { Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import { useEffect, useState } from "react"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { useDispatch, useSelector } from "react-redux"
-import { GridSetup, makeNewGamePieces } from "../../constants"
-import { auth } from "../../firestore"
-import { setNewGame } from "../../store/gameReducer"
+import { auth } from "../../Functions/firestore"
 import Bishop from "./Pieces/Bishop"
 import King from "./Pieces/King"
 import Knight from "./Pieces/Knight"
@@ -122,7 +121,7 @@ const GamePage = (props) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: '75%'}}>
-            <label>This is the Game Page</label>
+            <Typography sx={{padding: '10px'}}>{gameState.name}</Typography>
             <Box sx={{borderStyle: 'solid', display: 'grid', gridTemplateRows: 'repeat(8, minmax(2px, 1fr))', gridTemplateColumns: 'repeat(8, minmax(2px, 1fr))', justifyItems: 'stretch', height: '100%', width: '100%' }}>
                 {gameBoard ? gameBoard.gameBoardElements : null}
 

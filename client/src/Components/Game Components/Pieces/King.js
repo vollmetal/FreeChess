@@ -1,8 +1,9 @@
 import { Box, Button } from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
 import { getSquareIndexFromCoords } from "../../../boardManagement"
-import { blackPieceImgPath, imagePath, piecePath, SERVER_PATH } from "../../../constants"
-import { moveCancel, moveFinish, moveStart, selectPiece } from "../../../store/gameReducer"
+import { imagePath, piecePath, SERVER_PATH } from "../../../constants"
+import movePosition from "../../../Game Functions/MovePosition"
+import { moveCancel, moveFinish, moveStart } from "../../../store/gameReducer"
 
 
 
@@ -12,28 +13,6 @@ const King = (props) => {
     const gameState = useSelector(state => state.game)
     const userState = useSelector(state => state.user)
     const dispatch = useDispatch()
-
-    const movePosition = (x, y) => {
-      let returnSpace = {space: null, catch: false}
-      let targetPosition = {x: x, y: y}
-      let targetSpace = getSquareIndexFromCoords(targetPosition, gameState.gameBoard)
-      let targetPiece = getSquareIndexFromCoords(targetPosition, gameState.gamePieces)
-      console.log(`Target Space - ${targetSpace} || Target Piece - ${targetPiece} || Piece Position x - ${gameState.gamePieces[props.id].position.x} || Piece Position y - ${gameState.gamePieces[props.id].position.y}`)
-      if(targetSpace != -1) {
-          if(targetPiece != -1) {
-              if(gameState.gamePieces[targetPiece].player != props.player) {
-                  returnSpace.space = {targetPiece: targetPiece, position: targetPosition, type: 'Capture', id: props.id}
-                  returnSpace.catch = true
-              } else {
-                  returnSpace.catch = true
-              }
-          } else {
-              returnSpace.space = {position: targetPosition, type: 'Move', id: props.id}
-          }
-          
-      }
-      return returnSpace
-  }
 
     const movePiece = () => {
       let moveSpaces = []
@@ -49,7 +28,7 @@ const King = (props) => {
       }
       console.log(gameState.gamePieces[props.id].position.y)
 
-      tempSpace = movePosition((1 + gameState.gamePieces[props.id].position.x), (1 + gameState.gamePieces[props.id].position.y))
+      tempSpace = movePosition((1 + gameState.gamePieces[props.id].position.x), (1 + gameState.gamePieces[props.id].position.y), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
           if(tempSpace.catch) {
               if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
@@ -60,7 +39,7 @@ const King = (props) => {
               }
           }
 
-          tempSpace = movePosition((1 + gameState.gamePieces[props.id].position.x), (gameState.gamePieces[props.id].position.y - 1))
+          tempSpace = movePosition((1 + gameState.gamePieces[props.id].position.x), (gameState.gamePieces[props.id].position.y - 1), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
           if(tempSpace.catch) {
               if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
@@ -71,7 +50,7 @@ const King = (props) => {
               }
           }
 
-      tempSpace = movePosition((1 + gameState.gamePieces[props.id].position.x), gameState.gamePieces[props.id].position.y)
+      tempSpace = movePosition((1 + gameState.gamePieces[props.id].position.x), gameState.gamePieces[props.id].position.y, gameState.gameBoard, gameState.gamePieces, props.id, props.player)
           if(tempSpace.catch) {
               if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
@@ -82,7 +61,7 @@ const King = (props) => {
               }
           }
 
-          tempSpace = movePosition((gameState.gamePieces[props.id].position.x - 1), (gameState.gamePieces[props.id].position.y - 1))
+          tempSpace = movePosition((gameState.gamePieces[props.id].position.x - 1), (gameState.gamePieces[props.id].position.y - 1), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
           if(tempSpace.catch) {
               if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
@@ -93,7 +72,7 @@ const King = (props) => {
               }
           }
 
-          tempSpace = movePosition((gameState.gamePieces[props.id].position.x - 1), (1 + gameState.gamePieces[props.id].position.y))
+          tempSpace = movePosition((gameState.gamePieces[props.id].position.x - 1), (1 + gameState.gamePieces[props.id].position.y), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
           if(tempSpace.catch) {
               if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
@@ -103,18 +82,7 @@ const King = (props) => {
                   moveSpaces.push(tempSpace.space)
               }
           }
-          tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (gameState.gamePieces[props.id].position.y - 1))
-          if(tempSpace.catch) {
-              if(tempSpace.space) {
-                captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
-              }
-          } else {
-              if(tempSpace.space) {
-                  moveSpaces.push(tempSpace.space)
-              }
-          }
-
-          tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (1 + gameState.gamePieces[props.id].position.y))
+          tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (gameState.gamePieces[props.id].position.y - 1), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
           if(tempSpace.catch) {
               if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
@@ -125,7 +93,18 @@ const King = (props) => {
               }
           }
 
-          tempSpace = movePosition((gameState.gamePieces[props.id].position.x - 1), gameState.gamePieces[props.id].position.y)
+          tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (1 + gameState.gamePieces[props.id].position.y), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
+          if(tempSpace.catch) {
+              if(tempSpace.space) {
+                captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+              }
+          } else {
+              if(tempSpace.space) {
+                  moveSpaces.push(tempSpace.space)
+              }
+          }
+
+          tempSpace = movePosition((gameState.gamePieces[props.id].position.x - 1), gameState.gamePieces[props.id].position.y, gameState.gameBoard, gameState.gamePieces, props.id, props.player)
           if(tempSpace.catch) {
               if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }

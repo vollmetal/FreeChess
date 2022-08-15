@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { GridSetup } from '../constants';
 
 
 export const gameReducer = createSlice ({
@@ -56,7 +55,7 @@ export const gameReducer = createSlice ({
             state.gamePieces = action.payload
             state.movePiece = 0
             state.spaceModifiers = []
-            if(state.playerTurn == 1) {
+            if(state.playerTurn === 1) {
                 state.playerTurn = 2
             } else {
                 state.playerTurn = 1
@@ -65,9 +64,9 @@ export const gameReducer = createSlice ({
         },
 
         setClientPlayer: (state, action) => {
-            if(state.players[0].id == action.payload.id) {
+            if(state.players[0].id === action.payload.id) {
                 state.players[0].clientPlayer = true
-            } else if(state.players[1].id == action.payload.id) {
+            } else if(state.players[1].id === action.payload.id) {
                 state.players[1].clientPlayer = true
             }
         }

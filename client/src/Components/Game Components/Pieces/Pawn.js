@@ -1,7 +1,8 @@
 import { Box, Button } from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
 import { getSquareIndexFromCoords } from "../../../boardManagement"
-import { blackPieceImgPath, imagePath, piecePath, SERVER_PATH } from "../../../constants"
+import { imagePath, piecePath, SERVER_PATH } from "../../../constants"
+import movePosition from "../../../Game Functions/MovePosition"
 import { moveCancel, moveFinish, moveStart, selectPiece } from "../../../store/gameReducer"
 
 
@@ -12,28 +13,6 @@ const Pawn = (props) => {
     const gameState = useSelector(state => state.game)
     const userState = useSelector(state => state.user)
     const dispatch = useDispatch()
-
-    const movePosition = (x, y) => {
-        let returnSpace = { space: null, catch: false }
-        let targetPosition = { x: x, y: y }
-        let targetSpace = getSquareIndexFromCoords(targetPosition, gameState.gameBoard)
-        let targetPiece = getSquareIndexFromCoords(targetPosition, gameState.gamePieces)
-        console.log(`Target Space - ${targetSpace} || Target Piece - ${targetPiece} || Piece Position x - ${gameState.gamePieces[props.id].position.x} || Piece Position y - ${gameState.gamePieces[props.id].position.y}`)
-        if (targetSpace != -1) {
-            if (targetPiece != -1) {
-                if (gameState.gamePieces[targetPiece].player != props.player) {
-                    returnSpace.space = { position: targetPosition, type: 'Capture', id: props.id }
-                    returnSpace.catch = true
-                } else {
-                    returnSpace.catch = true
-                }
-            } else {
-                returnSpace.space = { position: targetPosition, type: 'Move', id: props.id }
-            }
-
-        }
-        return returnSpace
-    }
 
     const movePiece = () => {
         let moveSpaces = []
@@ -50,7 +29,7 @@ const Pawn = (props) => {
         while (spaceY <= 2) {
             if (props.player == 1) {
                 if (gameState.gamePieces[props.id].position.y == 2) {
-                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (spaceY + gameState.gamePieces[props.id].position.y))
+                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (spaceY + gameState.gamePieces[props.id].position.y), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
                     if (tempSpace.catch) {
                         break;
                     } else {
@@ -61,7 +40,7 @@ const Pawn = (props) => {
 
                     }
                 } else {
-                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (1 + gameState.gamePieces[props.id].position.y))
+                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (1 + gameState.gamePieces[props.id].position.y), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
                     if (tempSpace.catch) {
                         break;
                     } else {
@@ -75,7 +54,7 @@ const Pawn = (props) => {
 
             } else {
                 if (gameState.gamePieces[props.id].position.y == 7) {
-                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (gameState.gamePieces[props.id].position.y - spaceY))
+                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (gameState.gamePieces[props.id].position.y - spaceY), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
                     if (tempSpace.catch) {
                         break;
                     } else {
@@ -84,7 +63,7 @@ const Pawn = (props) => {
                         }
                     }
                 } else {
-                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (gameState.gamePieces[props.id].position.y - 1))
+                    tempSpace = movePosition(gameState.gamePieces[props.id].position.x, (gameState.gamePieces[props.id].position.y - 1), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
                     if (tempSpace.catch) {
                         break;
                     } else {

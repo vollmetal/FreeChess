@@ -1,11 +1,11 @@
-import { Button, Card, CardActionArea, Typography } from "@mui/material";
+import { Button, Card, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { NavLink, useNavigate } from "react-router-dom";
 import { socket } from "..";
 import { SERVER_PATH } from "../constants";
-import { auth } from "../firestore";
+import { auth } from "../Functions/firestore";
 
 
 
@@ -18,7 +18,6 @@ const GameList = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        const loading = false;
         getInfo()
         
 
