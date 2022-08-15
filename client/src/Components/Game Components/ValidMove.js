@@ -13,16 +13,11 @@ const ValidMove = (props) => {
     const dispatch = useDispatch()
 
     const movePiece = async () => {
-        const newPositions = await gameState.gamePieces.map(piece => {
-            console.log(piece)
-            if(piece.position.x == gameState.gamePieces[props.movePiece].position.x && piece.position.y == gameState.gamePieces[props.movePiece].position.y) {
-                return {position: props.position, piece: piece.piece, player: piece.player, capture: false}
-            } else {
+        let newPositions = gameState.gamePieces.map(piece => {
                 return piece
-            }
         })
+        newPositions[props.movePiece] = {position: props.position, piece: newPositions[props.movePiece].piece, player: newPositions[props.movePiece].player, capture: false}
         console.log(newPositions)
-        dispatch(moveFinish(newPositions))
         console.log(gameState.gamePieces)
         
         const result = await fetch(`${SERVER_PATH}/game/move/${gameState.id}`, {

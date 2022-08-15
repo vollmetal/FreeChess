@@ -153,6 +153,7 @@ gameRouter.post('/lobby/joinSide/:gameId', async (req, res) => {
     try {
         const game = await Game.findById(gameId)
         if (game.currentPlayers < 2) {
+            const newPlayer = game.currentPlayers++
             if (playerInfo.side == 1) {
                 const updateGame = await game.updateOne({
                     players: {
@@ -167,7 +168,7 @@ gameRouter.post('/lobby/joinSide/:gameId', async (req, res) => {
                             score: game.players[2].score
                         }
                     },
-                    currentPlayers: game.currentPlayers++
+                    currentPlayers: newPlayer
                 })
                 joinedSide = 'player 1'
             } else {
@@ -184,7 +185,7 @@ gameRouter.post('/lobby/joinSide/:gameId', async (req, res) => {
                             score: game.players[2].score
                         }
                     },
-                    currentPlayers: game.currentPlayers++
+                    currentPlayers: newPlayer
                 })
                 joinedSide = 'player 2'
             }
@@ -227,7 +228,7 @@ gameRouter.post('/move/:gameId', async (req, res) => {
                 playerTurn: newTurn
             })
             io.to(`room - ${req.params.gameId}`).emit('updateRoom')
-            res.json({ success: true, message: 'move successfully made!', currentData: updatedGame})
+            res.json({ success: true, message: 'move successfully made!', currentData: gameUpdate})
         } catch {
             res.json({ success: false, message: 'ERROR: failed to fetch game info 2!', currentData: req.body.move })
         }

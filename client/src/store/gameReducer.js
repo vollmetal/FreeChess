@@ -71,10 +71,17 @@ export const gameReducer = createSlice ({
             } else if(state.players[1].id === action.payload.id) {
                 state.players[1].clientPlayer = true
             }
+        },
+
+        clear: (state) => {
+        state.gamePieces = []
+        state.movePiece = 0
+        state.spaceModifiers = []
+        state.gameState = ''
         }
     }
 })
 
-export const { setNewGame, moveStart, moveCancel, moveFinish, makePiece, setClientPlayer } = gameReducer.actions;
+export const { setNewGame, moveStart, moveCancel, moveFinish, makePiece, setClientPlayer, clear } = gameReducer.actions;
 
 export default gameReducer.reducer;

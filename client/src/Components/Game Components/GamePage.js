@@ -27,12 +27,8 @@ const GamePage = (props) => {
     const [gameLoaded, setGameLoaded] = useState(false)
 
     useEffect(() => {
-        let isRunning = true
 
         makeBoardElements()
-        return () => {
-            isRunning = false
-        }
     }, [gameState])
 
     const makeBoardElements = () => {

@@ -1,4 +1,5 @@
 import { Box, Button } from "@mui/material"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { getSquareIndexFromCoords } from "../../../boardManagement"
 import { imagePath, piecePath, SERVER_PATH } from "../../../constants"
@@ -12,31 +13,52 @@ const Knight = (props) => {
 
     const gameState = useSelector(state => state.game)
     const userState = useSelector(state => state.user)
+
+    const [load, setLoad] = useState(false)
+    const [moves, setMoves] = useState({
+        moveSpaces: [],
+        captureSpaces: [],
+        canCapture: false,
+        canMove: false
+    })
     const dispatch = useDispatch()
+
+    useEffect(() => {
+        movePiece()
+
+    }, [load])
+
+    const startMove = () => {
+
+        if( gameState.gameState == 'clientMoving') {
+            dispatch(moveCancel())
+        }
+        if( gameState.movePiece == props.id) {
+
+        } else {
+            dispatch(moveStart({emptySpaces: moves.moveSpaces, captureSpaces: moves.captureSpaces, id: props.id}))
+        }
+    }
 
     const movePiece = () => {
         let moveSpaces = []
         let captureSpaces = gameState.gamePieces.map(piece => {
             return piece
         })
-        let tempSpace = ''
-        let spaceX = 0
+        let tempSpace = {}
+        let spaceX = 1
         let spaceY = 1
+        let capture = false
+        let canMove = false
 
-        
-
-        if( gameState.gameState == 'clientMoving') {
-            dispatch(moveCancel())
-        }
         tempSpace = movePosition((2 + gameState.gamePieces[props.id].position.x), (1 + gameState.gamePieces[props.id].position.y), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
         if(tempSpace.catch) {
             if(tempSpace.space) {
-                console.log(tempSpace.space)
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                capture = true
             }
         } else {
             if(tempSpace.space) {
-                console.log(tempSpace.space)
                 moveSpaces.push(tempSpace.space)
             }
         }
@@ -44,10 +66,10 @@ const Knight = (props) => {
         if(tempSpace.catch) {
             if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                capture = true
             }
         } else {
             if(tempSpace.space) {
-                console.log(tempSpace.space)
                 moveSpaces.push(tempSpace.space)
             }
         }
@@ -56,6 +78,7 @@ const Knight = (props) => {
         if(tempSpace.catch) {
             if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                capture = true
             }
         } else {
             if(tempSpace.space) {
@@ -66,6 +89,7 @@ const Knight = (props) => {
         if(tempSpace.catch) {
             if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                capture = true
             }
         } else {
             if(tempSpace.space) {
@@ -78,6 +102,7 @@ const Knight = (props) => {
         if(tempSpace.catch) {
             if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                capture = true
             }
         } else {
             if(tempSpace.space) {
@@ -88,6 +113,7 @@ const Knight = (props) => {
         if(tempSpace.catch) {
             if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                capture = true
             }
         } else {
             if(tempSpace.space) {
@@ -99,6 +125,7 @@ const Knight = (props) => {
         if(tempSpace.catch) {
             if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                capture = true
             }
         } else {
             if(tempSpace.space) {
@@ -109,6 +136,7 @@ const Knight = (props) => {
         if(tempSpace.catch) {
             if(tempSpace.space) {
                 captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                capture = true
             }
         } else {
             if(tempSpace.space) {
@@ -116,8 +144,19 @@ const Knight = (props) => {
             }
         }
 
-        console.log(moveSpaces)
-        dispatch(moveStart({emptySpaces: moveSpaces, captureSpaces: captureSpaces, id: props.id}))
+        if(moveSpaces) {
+            if(moveSpaces.length > 0 || capture) {
+                canMove = true
+            }
+        }
+        setMoves({
+            ...moves,
+            moveSpaces: moveSpaces,
+            captureSpaces: captureSpaces,
+            canCapture: capture,
+            canMove: canMove
+        })
+        
     }
 
     const capturePiece = async () => {
@@ -145,12 +184,12 @@ const Knight = (props) => {
         console.log(sanitizedResult)
     }
 
-    return (<Box>
+    return (<Box sx={{height: '100%', width: '100%'}}>
         {props.player != gameState.clientPlayer && props.capture ? <Button sx={{borderStyle: 'solid', borderColor: 'red', borderWidth: '4px', height: '100%', width: '100%', padding: '0px'}} onClick={capturePiece}>
         <Box sx={{height: '100%', width: '100%'}} component="img"
            alt="placeholder"
            src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${userState.playerPiece[props.player -1]}/Knight.png`}/>
-         </Button>: props.player == gameState.clientPlayer && gameState.playerTurn == props.player ? <Button sx={{height: '100%', width: '100%', padding: '0px'}} onClick={movePiece}>
+         </Button>: props.player == gameState.clientPlayer && gameState.playerTurn == props.player && moves.canMove ? <Button sx={{height: '100%', width: '100%', padding: '0px'}} onClick={startMove}>
     <Box sx={{height: '100%', width: '100%'}} component="img"
        alt="placeholder"
        src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${userState.playerPiece[props.player -1]}/Knight.png`}/>

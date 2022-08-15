@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { socket } from "..";
 import { GridSetup, SERVER_PATH } from "../constants";
 import { auth } from "../Functions/firestore";
-import { setNewGame } from "../store/gameReducer";
+import { clear, setNewGame } from "../store/gameReducer";
 import { mainTheme } from "../Themes";
 import GamePage from "./Game Components/GamePage";
 
@@ -37,6 +37,7 @@ const GameLobby = () => {
     
 
     const fetchGameInfo = async () => {
+        
         const results = await fetch(`${SERVER_PATH}/game/loadGame/${gameId}`)
         const sanitizedResults = await results.json()
         if(sanitizedResults.success) {
@@ -49,7 +50,7 @@ const GameLobby = () => {
                 setIsPlayer(true)
                 clientPlayer = 2
             }
-            console.log(clientPlayer)
+            console.log(sanitizedResults.gameInfo.boardPieces)
             dispatch(setNewGame({ gameBoard: GridSetup(9,9), gamePieces: sanitizedResults.gameInfo.boardPieces, players: sanitizedResults.gameInfo.players, clientPlayer: clientPlayer, turn: sanitizedResults.gameInfo.playerTurn, id: sanitizedResults.gameInfo._id, name: sanitizedResults.gameInfo.name}))
             setGameInfo(sanitizedResults.gameInfo)
         } else {
@@ -81,13 +82,10 @@ const GameLobby = () => {
     }
 
     useEffect(() => {
-        let isRunning = true
         fetchGameInfo()
-        return () => {
-            isRunning = false
-        }
+        console.log('reloading')
 
-    }, [user, isLoading])
+    }, [isLoading])
 
     return (
         <Box sx={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>

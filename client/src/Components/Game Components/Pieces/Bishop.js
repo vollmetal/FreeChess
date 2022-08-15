@@ -1,5 +1,5 @@
 import { Box, Button } from "@mui/material"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { getSquareIndexFromCoords } from "../../../boardManagement"
 import { imagePath, piecePath, SERVER_PATH } from "../../../constants"
@@ -13,11 +13,32 @@ const Bishop = (props) => {
 
     const gameState = useSelector(state => state.game)
     const userState = useSelector(state => state.user)
+
+    const [load, setLoad] = useState(false)
+    const [moves, setMoves] = useState({
+        moveSpaces: [],
+        captureSpaces: [],
+        canCapture: false,
+        canMove: false
+    })
     const dispatch = useDispatch()
 
     useEffect(() => {
+        movePiece()
+        
 
-    }, [])
+    }, [load])
+
+    const startMove = () => {
+        if( gameState.gameState == 'clientMoving') {
+            dispatch(moveCancel())
+        }
+        if( gameState.movePiece == props.id) {
+
+        } else {
+            dispatch(moveStart({emptySpaces: moves.moveSpaces, captureSpaces: moves.captureSpaces, id: props.id}))
+        }
+    }
 
     const movePiece = () => {
         let moveSpaces = []
@@ -27,13 +48,11 @@ const Bishop = (props) => {
         let tempSpace = {}
         let spaceX = 1
         let spaceY = 1
+        let capture = false
+        let canMove = false
 
-        if( gameState.gameState == 'clientMoving') {
-            dispatch(moveCancel())
-        }
-        console.log(gameState.gamePieces[props.id].position.y)
+        
 
-        console.log('CHECKING TO MOVE DOWN RIGHT------------------------------------------------')
         //////////////////DOWN RIGHT ///////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////
         while ((spaceY + gameState.gamePieces[props.id].position.y) < 9 && (spaceX + gameState.gamePieces[props.id].position.x) < 9) {
@@ -41,6 +60,8 @@ const Bishop = (props) => {
             if(tempSpace.catch) {
                 if(tempSpace.space) {
                     captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                    capture = true
+                    
                 }
                 break;
             } else {
@@ -54,7 +75,6 @@ const Bishop = (props) => {
 
         spaceX = 1
         spaceY = 1
-        console.log('CHECKING TO MOVE UP RIGHT------------------------------------------------')
         ////////////////////UP RIGHT////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////
         while ((gameState.gamePieces[props.id].position.y - spaceY) > 0 && (spaceX + gameState.gamePieces[props.id].position.x) < 9) {
@@ -62,6 +82,7 @@ const Bishop = (props) => {
             if(tempSpace.catch) {
                 if(tempSpace.space) {
                     captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                    capture = true
                 }
                 break;
             } else {
@@ -75,7 +96,6 @@ const Bishop = (props) => {
 
         spaceX = 1
         spaceY = 1
-        console.log('CHECKING TO MOVE UP LEFT------------------------------------------------')
         ////////////////////UP LEFT////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////
         while ((gameState.gamePieces[props.id].position.y - spaceY) > 0 && (gameState.gamePieces[props.id].position.x - spaceX) > 0) {
@@ -83,6 +103,7 @@ const Bishop = (props) => {
             if(tempSpace.catch) {
                 if(tempSpace.space) {
                     captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                    capture = true
                 }
                 break;
             } else {
@@ -96,7 +117,6 @@ const Bishop = (props) => {
 
         spaceX = 1
         spaceY = 1
-        console.log('CHECKING TO MOVE DOWN LEFT------------------------------------------------')
         ////////////////////DOWN LEFT////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////
         while ((spaceY + gameState.gamePieces[props.id].position.y) < 9 && (gameState.gamePieces[props.id].position.x - spaceX) > 0) {
@@ -104,6 +124,7 @@ const Bishop = (props) => {
             if(tempSpace.catch) {
                 if(tempSpace.space) {
                     captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
+                    capture = true
                 }
                 break;
             } else {
@@ -114,8 +135,24 @@ const Bishop = (props) => {
             spaceY++
             spaceX++
         }
+        
 
-        dispatch(moveStart({emptySpaces: moveSpaces, captureSpaces: captureSpaces, id: props.id}))
+        if(moveSpaces) {
+            if(moveSpaces.length > 0 || capture) {
+                canMove = true
+            }
+        }
+        setMoves({
+            ...moves,
+            moveSpaces: moveSpaces,
+            captureSpaces: captureSpaces,
+            canCapture: capture,
+            canMove: canMove
+        })
+        console.log(moves.moveSpaces)
+        
+        
+     
     }
 
     const capturePiece = async () => {
@@ -143,11 +180,12 @@ const Bishop = (props) => {
         console.log(sanitizedResult)
     }
 
-    return (<Box>{props.player != gameState.clientPlayer && props.capture ? <Button sx={{borderStyle: 'solid', borderColor: 'red', borderWidth: '4px', height: '100%', width: '100%', padding: '0px'}} onClick={capturePiece}>
+    return (<Box sx={{height: '100%', width: '100%'}}>
+        {props.player != gameState.clientPlayer && props.capture ? <Button sx={{borderStyle: 'solid', borderColor: 'red', borderWidth: '4px', height: '100%', width: '100%', padding: '0px'}} onClick={capturePiece}>
         <Box sx={{height: '100%', width: '100%'}} component="img"
            alt="placeholder"
            src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${userState.playerPiece[props.player -1]}/Bishop.png`}/>
-         </Button>: props.player == gameState.clientPlayer && gameState.playerTurn == props.player ? <Button sx={{height: '100%', width: '100%', padding: '0px'}} onClick={movePiece}>
+         </Button>: props.player == gameState.clientPlayer && gameState.playerTurn == props.player && moves.canMove ? <Button sx={{height: '100%', width: '100%', padding: '0px'}} onClick={startMove}>
     <Box sx={{height: '100%', width: '100%'}} component="img"
        alt="placeholder"
        src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${userState.playerPiece[props.player -1]}/Bishop.png`}/>
