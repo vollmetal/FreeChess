@@ -1,7 +1,7 @@
-import { Button, Card, TextField } from '@mui/material';
+import { Avatar, Box, Button, Card, Checkbox, Container, CssBaseline, FormControlLabel, Grid, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { auth, logInWithEmailAndPassword, signInWithGoogle } from '../Functions/firestore';
 
 
@@ -27,15 +27,72 @@ const Login = (props) => {
     }
 
     return (
-        <Card>
-            <Card>
-                <TextField onChange={updateCredentials} id="outlined-basic" helperText="Email" name='email' variant="outlined" />
-                <TextField type='password' onChange={updateCredentials} id="outlined-basic" helperText="Password" name='password' variant="outlined" />
-                <Button variant='contained' onClick={() => {logInWithEmailAndPassword(loginCredentials.email, loginCredentials.password)}}>Login with Email and Password</Button>
-            </Card>
-            <Button variant='contained' onClick={signInWithGoogle}>Login with Google account</Button>
-            <NavLink to='/registration'><Button variant='contained' >Register for a new account here if you don't have one</Button></NavLink>
-        </Card>
+        <Container component="main" maxWidth="xs">
+        
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          <Box component="form" noValidate sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              onChange={updateCredentials}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={updateCredentials}
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me"
+            />
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={() => {logInWithEmailAndPassword(loginCredentials.email, loginCredentials.password)}}
+            >
+              Sign In
+            </Button>
+
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={signInWithGoogle}
+            >
+              Sign In With Google
+            </Button>
+            <Grid container>
+              <Grid item xs>
+              </Grid>
+              <Grid item>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+      </Container>
     )
 
 }

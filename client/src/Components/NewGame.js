@@ -3,6 +3,7 @@ import { Box } from "@mui/system";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
+import { socket } from "..";
 import { makeNewGamePieces, SERVER_PATH } from "../constants";
 import { auth } from "../Functions/firestore";
 
@@ -44,6 +45,7 @@ const NewGame = () => {
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
             console.log(sanitizedResult.message)
+            socket.emit('newGameLobby')
             navigate('/game')
         }
     }

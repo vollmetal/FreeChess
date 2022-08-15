@@ -1,4 +1,5 @@
 import { Box, Button } from "@mui/material"
+import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { getSquareIndexFromCoords } from "../../../boardManagement"
 import { imagePath, piecePath, SERVER_PATH } from "../../../constants"
@@ -13,6 +14,10 @@ const Bishop = (props) => {
     const gameState = useSelector(state => state.game)
     const userState = useSelector(state => state.user)
     const dispatch = useDispatch()
+
+    useEffect(() => {
+
+    }, [])
 
     const movePiece = () => {
         let moveSpaces = []

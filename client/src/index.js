@@ -16,6 +16,8 @@ import Registration from './Components/Registration';
 
 import { io } from "socket.io-client";
 import { SERVER_PATH } from './constants';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { mainTheme } from './Themes';
 
 
 export const socket = io('http://localhost:4201');
@@ -26,7 +28,9 @@ socket.connect()
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <ThemeProvider theme={mainTheme}>
     <BrowserRouter>
+    <CssBaseline enableColorScheme  />
     <Provider store={store}>
     <PageBase>
       <Routes>
@@ -40,6 +44,7 @@ root.render(
     </PageBase>
     </Provider>
     </BrowserRouter>
+    </ThemeProvider>
   </React.StrictMode>
 );
 
