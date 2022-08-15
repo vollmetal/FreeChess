@@ -12,8 +12,75 @@ io.on('connection', async (socket) => {
     console.log('connected!')
     socket.on('joinRoom', (args) => {
         console.log(args)
+        socket.leave('listRoom')
         socket.join(`room - ${args.roomId}`)
         console.log(socket.rooms)
+    })
+    socket.on("disconnecting", () => {
+        console.log(socket.rooms); // the Set contains at least the socket ID
+      });
+    
+      socket.on("disconnect", () => {
+        socket.rooms.size === 0
+      });
+
+    socket.on('listRoomJoin', (args) => {
+        console.log('joined the room showing list of lobbies!')
+        socket.join('listRoom')
+    })
+    socket.on('leaveRooms', async (args) => {
+        socket.leave('listRoom')
+        if(args) {
+            socket.leave(`room - ${args}`)
+            if(args.gameId) {
+                const game = await Game.findById(args.gameId)
+                if(args.playerSide) {
+                    let players = ''
+                    switch (args.playerSide) {
+                        case 1:
+                           players = {
+                                1: {
+                                    uid: '',
+                                    name: '',
+                                    score: game.players[1].score
+                                },
+                                2: {
+                                    uid: game.players[2].uid,
+                                    name: game.players[2].name,
+                                    score: game.players[2].score
+                                }
+                            }                            
+                            break;
+
+                            case 2:
+                                players = {
+                                    1: {
+                                        uid: game.players[1].uid,
+                                        name: game.players[1].name,
+                                        score: game.players[1].score
+                                    },
+                                    2: {
+                                        uid: '',
+                                        name: '',
+                                        score: game.players[2].score
+                                    }
+                                }
+                            
+                                break;                    
+                        default:
+                            break;
+                    }
+                    
+                    const updateGame = await game.updateOne({
+                        players: players,
+                        currentPlayers: game.currentPlayers--
+                    })
+                }
+            }
+            
+
+        }
+        
     })
     
 })
@@ -34,7 +101,8 @@ gameRouter.post('/new', async (req, res) => {
             if (error) {
                 res.json({ success: false, message: error, currentData: gameInfo })
             } else {
-                res.json({ success: true, message: `Game ${gameInfo.gameName} successfully made!` })
+                io.to(`listRoom`).emit('lobbyListUpdate')
+                res.json({ success: true, game: newGame, message: `Game ${gameInfo.gameName} successfully made!` })
             }
         })
     } else {
@@ -121,6 +189,7 @@ gameRouter.post('/lobby/joinSide/:gameId', async (req, res) => {
                 joinedSide = 'player 2'
             }
 
+            io.to(`room - ${req.params.gameId}`).emit('updateRoom')
             res.json({ success: true, message: `You have joined as ${joinedSide}!` })
         }
     } catch {

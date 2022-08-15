@@ -10,9 +10,11 @@ export const gameReducer = createSlice ({
         clientPlayer: 0,
         players: [{
             id: '',
+            name: '',
             score: 0
         }, {
             id: '',
+            name: '',
             score: 0
         }],
         gameBoard: ['this'],
