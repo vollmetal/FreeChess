@@ -50,7 +50,7 @@ const GameLobby = () => {
                 clientPlayer = 2
             }
             console.log(clientPlayer)
-            dispatch(setNewGame({ gameBoard: GridSetup(9,9), gamePieces: sanitizedResults.gameInfo.boardPieces, players: sanitizedResults.gameInfo.players, clientPlayer: clientPlayer, turn: sanitizedResults.gameInfo.playerTurn, id: sanitizedResults.gameInfo._id, name: sanitizedResults.gameInfo.name}))
+            dispatch(setNewGame({ gameBoard: sanitizedResults.gameInfo.gameBoard, players: sanitizedResults.gameInfo.players, clientPlayer: clientPlayer, turn: sanitizedResults.gameInfo.playerTurn, id: sanitizedResults.gameInfo._id, name: sanitizedResults.gameInfo.name}))
             setGameInfo(sanitizedResults.gameInfo)
         } else {
 
