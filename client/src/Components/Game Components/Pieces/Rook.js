@@ -2,6 +2,7 @@ import { Box, Button } from "@mui/material"
 import { useDispatch, useSelector } from "react-redux"
 import { getSquareIndexFromCoords } from "../../../boardManagement"
 import { imagePath, piecePath, SERVER_PATH } from "../../../constants"
+import capturePiece from "../../../Game Functions/CapturePiece"
 import movePosition from "../../../Game Functions/MovePosition"
 import { moveCancel, moveFinish, moveStart } from "../../../store/gameReducer"
 
@@ -105,33 +106,8 @@ const Rook = (props) => {
         dispatch(moveStart({emptySpaces: moveSpaces, captureSpaces: captureSpaces, id: props.id}))
     }
 
-    const capturePiece = async () => {
-        const position = gameState.gamePieces[props.id].position
-        const oldPosition = gameState.gamePieces[gameState.movePiece].position
-        let filteredPieces = await gameState.gamePieces.filter(piece => {
-            return (piece.position !== position)
-        })
-
-
-        console.log(getSquareIndexFromCoords(oldPosition, filteredPieces))
-        filteredPieces[getSquareIndexFromCoords(oldPosition, filteredPieces)] = {position: position, piece: filteredPieces[getSquareIndexFromCoords(oldPosition, filteredPieces)].piece, player: filteredPieces[getSquareIndexFromCoords(oldPosition, filteredPieces)].player, capture: false}
-        console.log(filteredPieces)
-        dispatch(moveFinish(filteredPieces))
-        console.log(gameState.gamePieces)
-        
-        const result = await fetch(`${SERVER_PATH}/game/move/${gameState.id}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({move: filteredPieces})
-        })
-        const sanitizedResult = await result.json()
-        console.log(sanitizedResult)
-    }
-
-    return (<Box>
-        {props.player !== gameState.clientPlayer && props.capture ? <Button sx={{borderStyle: 'solid', borderColor: 'red', borderWidth: '4px', height: '100%', width: '100%', padding: '0px'}} onClick={capturePiece}>
+    return (<Box sx={{height: '100%', width: '100%', padding: '0px'}}>
+        {props.player !== gameState.clientPlayer && props.capture ? <Button sx={{borderStyle: 'solid', borderColor: 'red', borderWidth: '4px', height: '100%', width: '100%', padding: '0px'}} onClick={() => {capturePiece(gameState, props.id, dispatch)}}>
         <Box sx={{height: '100%', width: '100%'}} component="img"
            alt="placeholder"
            src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${userState.playerPiece[props.player -1]}/Rook.png`}/>
