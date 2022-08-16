@@ -11,7 +11,7 @@ const gameSchema =  new mongoose.Schema({
     2:{uid: String,
         name: String,
     score: Number }},
-    boardPieces: Array,
+    gameBoard: Array,
     playerTurn: Number
 })
 

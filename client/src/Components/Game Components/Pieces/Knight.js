@@ -1,9 +1,11 @@
 import { Box, Button } from "@mui/material"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { getSquareIndexFromCoords } from "../../../boardManagement"
 import { imagePath, piecePath, SERVER_PATH } from "../../../constants"
 import capturePiece from "../../../Game Functions/CapturePiece"
 import movePosition from "../../../Game Functions/MovePosition"
+import MovePrediction from "../../../Game Functions/MovePrediction"
 import { moveCancel, moveFinish, moveStart } from "../../../store/gameReducer"
 
 
@@ -15,121 +17,40 @@ const Knight = (props) => {
     const userState = useSelector(state => state.user)
     const dispatch = useDispatch()
 
-    const movePiece = () => {
-        let moveSpaces = []
-        let captureSpaces = gameState.gamePieces.map(piece => {
-            return piece
+    const [movePredictions, setMovePredictions] = useState({})
+
+
+    useEffect (() => {
+        let movePosition = {x: gameState.gameBoard[props.id].position.x - 1, y: gameState.gameBoard[props.id].position.y - 2}
+        let topLeft = MovePrediction(movePosition, movePosition, gameState, props.player, 1 )
+        movePosition = {x: gameState.gameBoard[props.id].position.x + 1, y: gameState.gameBoard[props.id].position.y - 2}
+        let topRight = MovePrediction(movePosition, movePosition, gameState, props.player, 1 )
+        movePosition = {x: gameState.gameBoard[props.id].position.x - 1, y: gameState.gameBoard[props.id].position.y + 2}
+        let downLeft = MovePrediction(movePosition, movePosition, gameState, props.player, 1 )
+        movePosition = {x: gameState.gameBoard[props.id].position.x + 1, y: gameState.gameBoard[props.id].position.y + 2}
+        let downRight = MovePrediction(movePosition, movePosition, gameState, props.player, 1 )
+        movePosition = {x: gameState.gameBoard[props.id].position.x + 2, y: gameState.gameBoard[props.id].position.y + 1}
+        let rightUp = MovePrediction(movePosition, movePosition, gameState, props.player, 1 )
+        movePosition = {x: gameState.gameBoard[props.id].position.x + 2, y: gameState.gameBoard[props.id].position.y - 1}
+        let rightDown = MovePrediction(movePosition, movePosition, gameState, props.player, 1 )
+        movePosition = {x: gameState.gameBoard[props.id].position.x - 2, y: gameState.gameBoard[props.id].position.y + 1}
+        let leftUp = MovePrediction(movePosition, movePosition, gameState, props.player, 1 )
+        movePosition = {x: gameState.gameBoard[props.id].position.x - 2, y: gameState.gameBoard[props.id].position.y - 1}
+        let leftDown = MovePrediction(movePosition, movePosition, gameState, props.player, 1 )
+        const moveArray = topLeft.spaceArray.concat(topRight.spaceArray, downLeft.spaceArray, downRight.spaceArray, rightUp.spaceArray, rightDown.spaceArray, leftUp.spaceArray, leftDown.spaceArray)
+        const captureArray = topLeft.objectArray.concat(topRight.objectArray, downLeft.objectArray, downRight.objectArray, rightUp.objectArray, rightDown.objectArray, leftUp.objectArray, leftDown.objectArray)
+
+        setMovePredictions({
+            ...movePredictions,
+            emptySpaces: moveArray,
+            captureSpaces: captureArray
         })
-        let tempSpace = ''
-        let spaceX = 0
-        let spaceY = 1
 
-        
-
-        if( gameState.gameState == 'clientMoving') {
-            dispatch(moveCancel())
-        }
-        tempSpace = movePosition((2 + gameState.gamePieces[props.id].position.x), (1 + gameState.gamePieces[props.id].position.y), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
-        if(tempSpace.catch) {
-            if(tempSpace.space) {
-                captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
-            }
-        } else {
-            if(tempSpace.space) {
-                moveSpaces.push(tempSpace.space)
-            }
-        }
-        tempSpace = movePosition((2 + gameState.gamePieces[props.id].position.x), (gameState.gamePieces[props.id].position.y - 1), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
-        if(tempSpace.catch) {
-            if(tempSpace.space) {
-                captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
-            }
-        } else {
-            if(tempSpace.space) {
-                moveSpaces.push(tempSpace.space)
-            }
-        }
-
-        tempSpace = movePosition((gameState.gamePieces[props.id].position.x - 2), (1 + gameState.gamePieces[props.id].position.y), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
-        if(tempSpace.catch) {
-            if(tempSpace.space) {
-                captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
-            }
-        } else {
-            if(tempSpace.space) {
-                moveSpaces.push(tempSpace.space)
-            }
-        }
-        tempSpace = movePosition((gameState.gamePieces[props.id].position.x - 2), (gameState.gamePieces[props.id].position.y - 1), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
-        if(tempSpace.catch) {
-            if(tempSpace.space) {
-                captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
-            }
-        } else {
-            if(tempSpace.space) {
-                moveSpaces.push(tempSpace.space)
-            }
-        }
-
-
-        tempSpace = movePosition((1 + gameState.gamePieces[props.id].position.x), (2 + gameState.gamePieces[props.id].position.y), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
-        if(tempSpace.catch) {
-            if(tempSpace.space) {
-                captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
-            }
-        } else {
-            if(tempSpace.space) {
-                moveSpaces.push(tempSpace.space)
-            }
-        }
-        tempSpace = movePosition((gameState.gamePieces[props.id].position.x - 1), (2 + gameState.gamePieces[props.id].position.y), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
-        if(tempSpace.catch) {
-            if(tempSpace.space) {
-                captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
-            }
-        } else {
-            if(tempSpace.space) {
-                moveSpaces.push(tempSpace.space)
-            }
-        }
-
-        tempSpace = movePosition((1 + gameState.gamePieces[props.id].position.x), (gameState.gamePieces[props.id].position.y - 2), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
-        if(tempSpace.catch) {
-            if(tempSpace.space) {
-                captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
-            }
-        } else {
-            if(tempSpace.space) {
-                moveSpaces.push(tempSpace.space)
-            }
-        }
-        tempSpace = movePosition((gameState.gamePieces[props.id].position.x - 1), (gameState.gamePieces[props.id].position.y - 2), gameState.gameBoard, gameState.gamePieces, props.id, props.player)
-        if(tempSpace.catch) {
-            if(tempSpace.space) {
-                captureSpaces[tempSpace.space.targetPiece] = { position: gameState.gamePieces[tempSpace.space.targetPiece].position, piece: gameState.gamePieces[tempSpace.space.targetPiece].piece, player: gameState.gamePieces[tempSpace.space.targetPiece].player, capture: true }
-            }
-        } else {
-            if(tempSpace.space) {
-                moveSpaces.push(tempSpace.space)
-            }
-        }
-        dispatch(moveStart({emptySpaces: moveSpaces, captureSpaces: captureSpaces, id: props.id}))
-    }
-
-    return (<Box sx={{height: '100%', width: '100%', padding: '0px'}}>
-        {props.player != gameState.clientPlayer && props.capture ? <Button sx={{borderStyle: 'solid', borderColor: 'red', borderWidth: '4px', height: '100%', width: '100%', padding: '0px'}} onClick={() => {capturePiece(gameState, props.id, dispatch)}}>
-        <Box sx={{height: '100%', width: '100%'}} component="img"
-           alt="placeholder"
-           src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${userState.playerPiece[props.player -1]}/Knight.png`}/>
-         </Button>: props.player == gameState.clientPlayer && gameState.playerTurn == props.player ? <Button sx={{height: '100%', width: '100%', padding: '0px'}} onClick={movePiece}>
-    <Box sx={{height: '100%', width: '100%'}} component="img"
-       alt="placeholder"
-       src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${userState.playerPiece[props.player -1]}/Knight.png`}/>
-     </Button>: <Box sx={{height: '100%', width: '100%'}}
+    }, [])
+    return (<Box sx={{height: '100%', width: '100%'}}
       component="img"
        alt="placeholder"
-       src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${userState.playerPiece[props.player -1]}/Knight.png`}/>}
-       </Box>
+       src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${userState.playerPiece[props.player -1]}/Knight.png`}/>
         
     )
 }

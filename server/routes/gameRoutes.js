@@ -93,7 +93,7 @@ gameRouter.post('/new', async (req, res) => {
             name: gameInfo.gameName,
             currentPlayers: 0,
             players: gameInfo.players,
-            boardPieces: gameInfo.boardPieces,
+            gameBoard: gameInfo.gameBoard,
             playerTurn: 1
 
         })
@@ -102,7 +102,7 @@ gameRouter.post('/new', async (req, res) => {
                 res.json({ success: false, message: error, currentData: gameInfo })
             } else {
                 io.to(`listRoom`).emit('lobbyListUpdate')
-                res.json({ success: true, game: newGame, message: `Game ${gameInfo.gameName} successfully made!` })
+                res.json({ success: true, game: newGame, message: `Game ${gameInfo.gameName} successfully made!`,  currentData: gameInfo})
             }
         })
     } else {

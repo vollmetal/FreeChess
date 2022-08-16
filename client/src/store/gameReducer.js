@@ -26,7 +26,6 @@ export const gameReducer = createSlice ({
     reducers: {
         setNewGame: (state, action) => {
                   state.gameBoard = action.payload.gameBoard
-                  state.gamePieces = action.payload.gamePieces
                   state.players = action.payload.players
                   state.clientPlayer = action.payload.clientPlayer
                   state.gameState = 'waiting'
