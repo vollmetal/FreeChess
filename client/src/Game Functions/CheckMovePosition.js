@@ -4,17 +4,18 @@ import { getSquareIndexFromCoords } from "../boardManagement";
 
 
 const CheckMovePosition = (targetPosition, gameArray) => {
-    const positionIndex = getSquareIndexFromCoords(targetPosition, gameArray.gameBoard)
-    if( positionIndex > -1) {
-        const objectIndex = getSquareIndexFromCoords(targetPosition, gameArray.gamePieces)
-        if (objectIndex > -1) {
-            return ({message: `object found at ${objectIndex}`, data: {type: 'object', index: objectIndex}})
+
+    const positionIndex = getSquareIndexFromCoords(targetPosition, gameArray)
+    if(positionIndex > -1) {
+        if(gameArray[positionIndex].piece != '') {
+            return ({index: positionIndex, piece: 'object'})
         } else {
-            return ({message: `no object found at ${positionIndex}`, data: {type: 'space', index: positionIndex}})
-        }
+            return ({index: positionIndex, piece: 'none'})
+        }        
     } else {
-        return ({message: `no tile found!`, data: {type: 'null', index: positionIndex}})
+        return ({index: positionIndex, piece: 'not a space'})
     }
+    
 }
 
 export default CheckMovePosition;

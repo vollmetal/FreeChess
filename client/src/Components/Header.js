@@ -1,9 +1,10 @@
 import { Avatar, Box, Button, ThemeProvider, Typography } from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from 'react-router-dom'
 import { socket } from "..";
 import { auth, logout } from "../Functions/firestore";
+import { clearGame } from "../store/gameReducer";
 import { mainTheme } from "../Themes";
 
 
@@ -12,6 +13,8 @@ import { mainTheme } from "../Themes";
 const Header = () => {
     const gameState = useSelector(state => state.game)
     const [user, loading, error] = useAuthState(auth)
+
+    const dispatch = useDispatch()
 
     socket.on('connect', (arg) => {
         
@@ -25,7 +28,7 @@ const Header = () => {
         } else {
             socket.emit('leaveRooms', {roomId: gameState.gameId})
         }
-        
+        dispatch(clearGame())
     }
 
     return (

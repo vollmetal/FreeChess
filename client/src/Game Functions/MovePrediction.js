@@ -3,7 +3,6 @@ import CheckMovePosition from "./CheckMovePosition";
 
 
 const MovePrediction = (startPosition, endPosition, gameArray, playerId, iterate = 1, searchType = 'line', iterateY = 0) => {
-    let objectArray = []
     let spaceArray = []
     let hitObject = false
     let diagCount = startPosition.y
@@ -14,19 +13,19 @@ const MovePrediction = (startPosition, endPosition, gameArray, playerId, iterate
                     if (!hitObject) {
                         
                         let spaceData = CheckMovePosition({ x: indexX, y: indexY }, gameArray)
-                        switch (spaceData.data.type) {
+                        switch (spaceData.piece) {
                             case 'object':
-                                if (gameArray.gamePieces[spaceData.data.index].player == playerId) {
+                                if (gameArray[spaceData.index].player == playerId) {
                                     hitObject = true
                                 } else {
-                                    objectArray.push(spaceData.data.index)
+                                    spaceArray.push({index: spaceData.index, type: 'capture'})
                                     hitObject = true
                                 }
                                 break;
-                            case 'space':
-                                spaceArray.push(spaceData.data.index)
+                            case 'none':
+                                spaceArray.push({index: spaceData.index, type: 'move'})
                                 break;
-                            case 'null':
+                            case 'not a space':
                                 hitObject = true
                                 break;
 
@@ -43,19 +42,19 @@ const MovePrediction = (startPosition, endPosition, gameArray, playerId, iterate
             for (let indexX = startPosition.x; indexX <= endPosition.x; indexX += iterate) {
                 if (!hitObject) {
                     let spaceData = CheckMovePosition({ x: indexX, y: diagCount }, gameArray)
-                    switch (spaceData.data.type) {
+                    switch (spaceData.piece) {
                         case 'object':
-                            if (gameArray.gamePieces[spaceData.data.index].player == playerId) {
+                            if (gameArray[spaceData.index].player == playerId) {
                                 hitObject = true
                             } else {
-                                objectArray.push(spaceData.data.index)
+                                spaceArray.push({index: spaceData.index, type: 'capture'})
                                 hitObject = true
                             }
                             break;
-                        case 'space':
-                            spaceArray.push(spaceData.data.index)
+                        case 'none':
+                            spaceArray.push({index: spaceData.index, type: 'move'})
                             break;
-                        case 'null':
+                        case 'not a space':
                             hitObject = true
                             break;
 
@@ -73,19 +72,19 @@ const MovePrediction = (startPosition, endPosition, gameArray, playerId, iterate
                 for (let indexY = startPosition.y; indexY >= endPosition.y; indexY += iterate) {
                     if (!hitObject) {
                         let spaceData = CheckMovePosition({ x: indexX, y: indexY }, gameArray)
-                        switch (spaceData.data.type) {
+                        switch (spaceData.piece) {
                             case 'object':
-                                if (gameArray.gamePieces[spaceData.data.index].player == playerId) {
+                                if (gameArray[spaceData.index].player == playerId) {
                                     hitObject = true
                                 } else {
-                                    objectArray.push(spaceData.data.index)
+                                    spaceArray.push({index: spaceData.index, type: 'capture'})
                                     hitObject = true
                                 }
                                 break;
-                            case 'space':
-                                spaceArray.push(spaceData.data.index)
+                            case 'none':
+                                spaceArray.push({index: spaceData.index, type: 'move'})
                                 break;
-                            case 'null':
+                            case 'not a space':
                                 hitObject = true
                                 break;
 
@@ -101,19 +100,19 @@ const MovePrediction = (startPosition, endPosition, gameArray, playerId, iterate
             for (let indexX = startPosition.x; indexX >= endPosition.x; indexX += iterate) {
                 if (!hitObject) {
                     let spaceData = CheckMovePosition({ x: indexX, y: diagCount }, gameArray)
-                    switch (spaceData.data.type) {
+                    switch (spaceData.piece) {
                         case 'object':
-                            if (gameArray.gamePieces[spaceData.data.index].player == playerId) {
+                            if (gameArray[spaceData.index].player == playerId) {
                                 hitObject = true
                             } else {
-                                objectArray.push(spaceData.data.index)
+                                spaceArray.push({index: spaceData.index, type: 'capture'})
                                 hitObject = true
                             }
                             break;
-                        case 'space':
-                            spaceArray.push(spaceData.data.index)
+                        case 'none':
+                            spaceArray.push({index: spaceData.index, type: 'move'})
                             break;
-                        case 'null':
+                        case 'not a space':
                             hitObject = true
                             break;
 
@@ -125,11 +124,11 @@ const MovePrediction = (startPosition, endPosition, gameArray, playerId, iterate
             }
         }
     }
-    if (objectArray.length > 0 || spaceArray.length > 0) {
+    if (spaceArray.length > 0) {
 
-        return { message: `${objectArray.length + spaceArray.length} spaces were found`, spaceArray: spaceArray, objectArray: objectArray }
+        return { message: `${spaceArray.length} spaces were found`, spaceArray: spaceArray}
     } else {
-        return { message: 'no spaces were found!', spaceArray: spaceArray, objectArray: objectArray }
+        return { message: 'no spaces were found!', spaceArray: spaceArray}
     }
 }
 

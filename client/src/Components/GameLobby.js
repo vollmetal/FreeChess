@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { socket } from "..";
 import { GridSetup, SERVER_PATH } from "../constants";
 import { auth } from "../Functions/firestore";
-import { setNewGame } from "../store/gameReducer";
+import { clearGame, setClientPlayer, setNewGame } from "../store/gameReducer";
 import { mainTheme } from "../Themes";
 import GamePage from "./Game Components/GamePage";
 
@@ -25,6 +25,8 @@ const GameLobby = () => {
 
     
     socket.on('updateRoom', () => {
+        console.log('received Room Update')
+        
         if(isLoading) {
             setLoading(false)
         } else {
@@ -50,6 +52,7 @@ const GameLobby = () => {
                 clientPlayer = 2
             }
             console.log(clientPlayer)
+            dispatch(clearGame())
             dispatch(setNewGame({ gameBoard: sanitizedResults.gameInfo.gameBoard, players: sanitizedResults.gameInfo.players, clientPlayer: clientPlayer, turn: sanitizedResults.gameInfo.playerTurn, id: sanitizedResults.gameInfo._id, name: sanitizedResults.gameInfo.name}))
             setGameInfo(sanitizedResults.gameInfo)
         } else {
@@ -73,14 +76,17 @@ const GameLobby = () => {
             body: JSON.stringify(data)})
         const sanitizedResults = await result.json()
         if(sanitizedResults.success) {
+            console.log(sanitizedResults.message)
             setIsPlayer(true)
+            dispatch(setClientPlayer(player))
             
         } else {
-
+            console.log(sanitizedResults.message)
         }
     }
 
     useEffect(() => {
+        
         let isRunning = true
         fetchGameInfo()
         return () => {
@@ -100,7 +106,7 @@ const GameLobby = () => {
                     </Box>}
             </Card>
             <Card sx={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', background: mainTheme.palette.primary.light}}>
-                <GamePage gameInfo={gameInfo}/>
+                <GamePage />
             </Card>
         </Box>
     )

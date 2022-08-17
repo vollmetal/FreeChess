@@ -208,26 +208,27 @@ gameRouter.get('/loadGame/:gameId', async (req, res) => {
 })
 
 gameRouter.post('/move/:gameId', async (req, res) => {
-    const move = req.body.move;
+    const move = req.body;
+
     let newTurn = 0
     try {
         const game = await Game.findById(req.params.gameId)
         try {
-            console.log(move)
+            console.log(game.playerTurn)
             
             if (game.playerTurn == 1) {
-                console.log('turn 2')
+                
                 newTurn = 2
             } else {
                 newTurn = 1
             }
-            
+            console.log(newTurn)            
             const gameUpdate = await game.updateOne({
-                boardPieces: move,
+                gameBoard: move,
                 playerTurn: newTurn
             })
             io.to(`room - ${req.params.gameId}`).emit('updateRoom')
-            res.json({ success: true, message: 'move successfully made!', currentData: updatedGame})
+            res.json({ success: true, message: 'move successfully made!', currentData: gameUpdate})
         } catch {
             res.json({ success: false, message: 'ERROR: failed to fetch game info 2!', currentData: req.body.move })
         }

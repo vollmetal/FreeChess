@@ -3,7 +3,9 @@ import { Box } from "@mui/system"
 import { useEffect, useState } from "react"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { useDispatch, useSelector } from "react-redux"
+import { SERVER_PATH } from "../../constants"
 import { auth } from "../../Functions/firestore"
+import { finishRender, moveCancel, moveFinish, moveStart } from "../../store/gameReducer"
 import Bishop from "./Pieces/Bishop"
 import King from "./Pieces/King"
 import Knight from "./Pieces/Knight"
@@ -27,16 +29,48 @@ const GamePage = (props) => {
     const [gameLoaded, setGameLoaded] = useState(false)
 
     useEffect(() => {
-        let isRunning = true
+        if(gameState.render != false) {
+            if(gameState.gameBoard) {
+                if(gameState.gameBoard.length > 1) {
+                    makeBoardElements()
+                    dispatch(finishRender())
+                }
+            }
+        } else {
+            return
+        }
+    })
 
-        if(gameState.gameBoard.length > 1) {
-            makeBoardElements()
-        }
+    const startMove = async (spaceId) => {
+        console.log(`selected the piece at ${spaceId}!`)
+        console.log(gameState.gameBoard[spaceId].moves)
+        dispatch(moveStart(spaceId))
         
-        return () => {
-            isRunning = false
-        }
-    }, [])
+    }
+
+    const moveSpace = async (spaceId, movePieceId, movePiece) => {
+        let newGameBoard = gameState.gameBoard.map(space => {return {position: space.position, color: space.color, piece: space.piece, player: space.player, move: space.move}})
+        newGameBoard[spaceId].piece = movePiece
+        newGameBoard[spaceId].player = gameState.clientPlayer
+
+        newGameBoard[movePieceId].piece = ''
+        newGameBoard[movePieceId].player = 0
+        newGameBoard = newGameBoard.map(space => {
+            return {position: space.position, piece: space.piece, move: '', player: space.player, color: space.color}
+        })
+        console.log(`moving ${movePieceId} to the space at ${spaceId}!`)
+        dispatch(moveFinish({spaceId: spaceId, movePieceId: movePieceId, movePiece: movePiece}))
+        console.log(newGameBoard[spaceId])
+        const result = await fetch(`${SERVER_PATH}/game/move/${gameState.id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newGameBoard)
+        })
+        const sanitizedResults = await result.json()
+        console.log(sanitizedResults)
+    }
 
     const makeBoardElements = () => {
 
@@ -46,23 +80,25 @@ const GamePage = (props) => {
 
         for (let index = 0; index < grid.length; index++) {
             const element = grid[index];
+            console.log(gameState.playerTurn)
+            console.log(gameState.clientPlayer)
             gameBoardElements.push(<Box sx={{ backgroundColor: element.color, gridColumn: element.position.x, gridRow: element.position.y }} key={`${index}`} >
 
-                {element.move == 'selectPiece' ? <Button>{element.piece == 'Pawn' ? <Pawn id={index} player={element.player} /> :
+                {element.move == 'selectPiece' && gameState.playerTurn === gameState.clientPlayer ? <Button onClick={() => {startMove(index)}} sx={{width: '100%', height: '100%', padding: '0px', borderStyle: 'solid', borderWidth: '3px', borderColor: 'gray'}}>{element.piece == 'Pawn' ? <Pawn id={index} player={element.player} /> :
                     element.piece == 'Rook' ? <Rook id={index} player={element.player} /> :
                         element.piece == 'Bishop' ? <Bishop id={index} player={element.player} /> :
                             element.piece == 'Knight' ? <Knight id={index} player={element.player} /> :
                                 element.piece == 'Queen' ? <Queen id={index} player={element.player} /> :
                                     element.piece == 'King' ? <King id={index} player={element.player} /> : null}
                 </Button> :
-                    element.move == 'moveSpace' ? <Button /> :
-                        element.move == 'capturePiece' ? <Button>{element.piece == 'Pawn' ? <Pawn id={index} player={element.player} /> :
+                    element.move == 'move' ? <Button onClick={() => {moveSpace(index, element.pieceIndex, gameState.gameBoard[element.pieceIndex].piece)}} sx={{width: '100%', height: '100%', padding: '0px', borderStyle: 'solid', borderWidth: '3px', borderColor: 'green'}} /> :
+                        element.move == 'capture' ? <Button onClick={() => {moveSpace(index, element.pieceIndex, gameState.gameBoard[element.pieceIndex].piece)}} sx={{width: '100%', height: '100%', padding: '0px', borderStyle: 'solid', borderWidth: '3px', borderColor: 'red'}}>{element.piece == 'Pawn' ? <Pawn id={index} player={element.player} /> :
                             element.piece == 'Rook' ? <Rook id={index} player={element.player} /> :
                                 element.piece == 'Bishop' ? <Bishop id={index} player={element.player} /> :
                                     element.piece == 'Knight' ? <Knight id={index} player={element.player} /> :
                                         element.piece == 'Queen' ? <Queen id={index} player={element.player} /> :
                                             element.piece == 'King' ? <King id={index} player={element.player} /> : null}</Button>
-                            : <Box>{element.piece == 'Pawn' ? <Pawn id={index} player={element.player} /> :
+                            : <Box sx={{width: '100%', height: '100%', padding: '0px'}}>{element.piece == 'Pawn' ? <Pawn id={index} player={element.player} /> :
                             element.piece == 'Rook' ? <Rook id={index} player={element.player} /> :
                                 element.piece == 'Bishop' ? <Bishop id={index} player={element.player} /> :
                                     element.piece == 'Knight' ? <Knight id={index} player={element.player} /> :
