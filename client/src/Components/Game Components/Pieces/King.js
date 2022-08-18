@@ -29,6 +29,11 @@ const King = (props) => {
         let downArray = MovePrediction({x: gameState.gameBoard[props.id].position.x , y: gameState.gameBoard[props.id].position.y - 1}, {x: gameState.gameBoard[props.id].position.x , y: gameState.gameBoard[props.id].position.y - 1}, gameState.gameBoard, props.player, -1)
         let moveArray = downRightArray.spaceArray.concat(downLeftArray.spaceArray, upRightArray.spaceArray, upLeftArray.spaceArray, leftArray.spaceArray, rightArray.spaceArray, downArray.spaceArray, upArray.spaceArray)
         if(moveArray.length > 0) {
+            moveArray.map(position => {
+                if(gameState.gameBoard[position.index].piece === 'King' && gameState.gameBoard[position.index].player != props.player) {
+                    console.log('I can capture their king!')
+                }
+            })
             if( gameState.clientPlayer === props.player) {
                 dispatch(pieceUpdate({id: props.id, move: 'selectPiece', moves: moveArray}))
             } else {

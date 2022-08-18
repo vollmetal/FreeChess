@@ -46,7 +46,13 @@ const Pawn = (props) => {
             captureArray = captureArray.filter(element => {if(element.type == 'capture') {return element}})
             moveArray = moveArray.filter(element => {return element.type == 'move'})
             moveArray = moveArray.concat(captureArray)
+            
             if(moveArray.length > 0) {
+                moveArray.map(position => {
+                    if(gameState.gameBoard[position.index].piece === 'King' && gameState.gameBoard[position.index].player != props.player) {
+                        console.log('I can capture their king!')
+                    }
+                })
                 if( gameState.clientPlayer === props.player) {
                     dispatch(pieceUpdate({id: props.id, move: 'selectPiece', moves: moveArray}))
                 } else {

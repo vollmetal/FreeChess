@@ -41,6 +41,11 @@ const Knight = (props) => {
             const moveArray = topLeft.spaceArray.concat(topRight.spaceArray, downLeft.spaceArray, downRight.spaceArray, rightUp.spaceArray, rightDown.spaceArray, leftUp.spaceArray, leftDown.spaceArray)
 
             if(moveArray.length > 0) {
+                moveArray.map(position => {
+                    if(gameState.gameBoard[position.index].piece === 'King' && gameState.gameBoard[position.index].player != props.player) {
+                        console.log('I can capture their king!')
+                    }
+                })
                 if( gameState.clientPlayer === props.player) {
                     dispatch(pieceUpdate({id: props.id, move: 'selectPiece', moves: moveArray}))
                 } else {

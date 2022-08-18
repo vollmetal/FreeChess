@@ -34,7 +34,23 @@ const GameLobby = () => {
         }
     })
 
-    
+    socket.on('userLeft', () => {
+        console.log('user has left the game')
+        if(isLoading) {
+            setLoading(false)
+        } else {
+            setLoading(true)
+        }
+    })
+
+    socket.on('userJoin', () => {
+        console.log('user has joined the game')
+        if(isLoading) {
+            setLoading(false)
+        } else {
+            setLoading(true)
+        }
+    })
 
     
 

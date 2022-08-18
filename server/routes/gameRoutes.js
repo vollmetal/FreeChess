@@ -33,8 +33,10 @@ io.on('connection', async (socket) => {
     socket.on('leaveRooms', async (args) => {
         socket.leave('listRoom')
         if(args) {
-            socket.leave(`room - ${args}`)
+            
             if(args.gameId) {
+                io.to(`room - ${args.gameId}`).emit('userLeft')
+                socket.leave(`room - ${args.gameId}`)
                 const game = await Game.findById(args.gameId)
                 if(args.playerSide) {
                     let players = ''
@@ -78,6 +80,7 @@ io.on('connection', async (socket) => {
                         players: players,
                         currentPlayers: currentPlayers
                     })
+                    
                 }
             }
             
@@ -193,7 +196,7 @@ gameRouter.post('/lobby/joinSide/:gameId', async (req, res) => {
                 joinedSide = 'player 2'
             }
 
-            io.to(`room - ${req.params.gameId}`).emit('updateRoom')
+            io.to(`room - ${req.params.gameId}`).emit('userJoin')
             res.json({ success: true, message: `You have joined as ${joinedSide}!` })
         }
     } catch {
