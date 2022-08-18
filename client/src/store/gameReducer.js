@@ -62,8 +62,6 @@ export const gameReducer = createSlice ({
         pieceUpdate: (state, action) => {
             state.gameBoard[action.payload.id].move = action.payload.move
             state.gameBoard[action.payload.id].moves = action.payload.moves
-            state.render = true
-            state.piecesUpdated = true
         },
 
         moveStart: (state, action) => {
@@ -71,7 +69,6 @@ export const gameReducer = createSlice ({
             state.gameBoard = state.gameBoard.map(piece => {
                 return {position: piece.position, color: piece.color, piece: piece.piece, player: piece.player, move: ''}
             })
-            console.log(current(temp))
             temp.forEach(element => {
                 
                 state.gameBoard[element.index].move = element.type
@@ -91,16 +88,12 @@ export const gameReducer = createSlice ({
         },
 
         moveFinish: (state, action) => {
-            
-            console.log(action.payload.movePiece)
             state.gameBoard[action.payload.spaceId].piece = action.payload.movePiece
             state.gameBoard[action.payload.spaceId].player = state.clientPlayer
             state.gameBoard[action.payload.spaceId].move = ''
-            console.log(current(state.gameBoard[action.payload.spaceId]))
 
             state.gameBoard[action.payload.movePieceId].piece = ''
             state.gameBoard[action.payload.movePieceId].player = 0
-            console.log(current(state.gameBoard[action.payload.movePieceId]))
             state.gameBoard = state.gameBoard.map(piece => {
                 return {position: piece.position, color: piece.color, piece: piece.piece, player: piece.player, move: ''}
             })

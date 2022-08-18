@@ -29,21 +29,15 @@ const GamePage = (props) => {
     const [gameLoaded, setGameLoaded] = useState(false)
 
     useEffect(() => {
-        if(gameState.render != false) {
             if(gameState.gameBoard) {
                 if(gameState.gameBoard.length > 1) {
                     makeBoardElements()
                     dispatch(finishRender())
                 }
             }
-        } else {
-            return
-        }
-    })
+    }, [gameState.render, gameState.gameBoard])
 
     const startMove = async (spaceId) => {
-        console.log(`selected the piece at ${spaceId}!`)
-        console.log(gameState.gameBoard[spaceId].moves)
         dispatch(moveStart(spaceId))
         
     }
@@ -58,9 +52,7 @@ const GamePage = (props) => {
         newGameBoard = newGameBoard.map(space => {
             return {position: space.position, piece: space.piece, move: '', player: space.player, color: space.color}
         })
-        console.log(`moving ${movePieceId} to the space at ${spaceId}!`)
         dispatch(moveFinish({spaceId: spaceId, movePieceId: movePieceId, movePiece: movePiece}))
-        console.log(newGameBoard[spaceId])
         const result = await fetch(`${SERVER_PATH}/game/move/${gameState.id}`, {
             method: 'POST',
             headers: {
@@ -80,8 +72,6 @@ const GamePage = (props) => {
 
         for (let index = 0; index < grid.length; index++) {
             const element = grid[index];
-            console.log(gameState.playerTurn)
-            console.log(gameState.clientPlayer)
             gameBoardElements.push(<Box sx={{ backgroundColor: element.color, gridColumn: element.position.x, gridRow: element.position.y }} key={`${index}`} >
 
                 {element.move == 'selectPiece' && gameState.playerTurn === gameState.clientPlayer ? <Button onClick={() => {startMove(index)}} sx={{width: '100%', height: '100%', padding: '0px', borderStyle: 'solid', borderWidth: '3px', borderColor: 'gray'}}>{element.piece == 'Pawn' ? <Pawn id={index} player={element.player} /> :
@@ -119,6 +109,7 @@ const GamePage = (props) => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: '75%' }}>
             <Typography sx={{ padding: '10px' }}>{gameState.name}</Typography>
+            <Typography sx={{ padding: '10px' }}>PLayer {gameState.playerTurn}'s turn</Typography>
             <Box sx={{ borderStyle: 'solid', display: 'grid', gridTemplateRows: 'repeat(8, minmax(2px, 1fr))', gridTemplateColumns: 'repeat(8, minmax(2px, 1fr))', justifyItems: 'stretch', height: '100%', width: '100%' }}>
                 {gameBoard ? gameBoard.gameBoardElements : null}
 

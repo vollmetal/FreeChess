@@ -23,7 +23,6 @@ const Header = () => {
     const newPage = async () => {
         const data = {roomId: gameState.id, gameId: gameState.id, playerSide: gameState.clientPlayer}
         if(gameState.gameId != '' && gameState.clientPlayer > 0) {
-            console.log(data)
             socket.emit('leaveRooms', data)
         } else {
             socket.emit('leaveRooms', {roomId: gameState.gameId})

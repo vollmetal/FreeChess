@@ -22,7 +22,6 @@ const Knight = (props) => {
 
 
     useEffect (() => {
-        if(pieceUpdated != true ) {
             let movePosition = {x: gameState.gameBoard[props.id].position.x - 1, y: gameState.gameBoard[props.id].position.y - 2}
             let topLeft = MovePrediction(movePosition, movePosition, gameState.gameBoard, props.player, 1 )
             movePosition = {x: gameState.gameBoard[props.id].position.x + 1, y: gameState.gameBoard[props.id].position.y - 2}
@@ -40,11 +39,7 @@ const Knight = (props) => {
             movePosition = {x: gameState.gameBoard[props.id].position.x - 2, y: gameState.gameBoard[props.id].position.y - 1}
             let leftDown = MovePrediction(movePosition, movePosition, gameState.gameBoard, props.player, 1 )
             const moveArray = topLeft.spaceArray.concat(topRight.spaceArray, downLeft.spaceArray, downRight.spaceArray, rightUp.spaceArray, rightDown.spaceArray, leftUp.spaceArray, leftDown.spaceArray)
-    
-            setMovePredictions({
-                ...movePredictions,
-                moveArray: moveArray
-            })
+
             if(moveArray.length > 0) {
                 if( gameState.clientPlayer === props.player) {
                     dispatch(pieceUpdate({id: props.id, move: 'selectPiece', moves: moveArray}))
@@ -52,13 +47,7 @@ const Knight = (props) => {
                 }
                 
             }
-            setPieceUpdated(true)
-
-        } else {
-            return
-        }
-
-    }, [pieceUpdated])
+    }, [gameState.render])
     return (<Box sx={{height: '100%', width: '100%'}}
       component="img"
        alt="placeholder"

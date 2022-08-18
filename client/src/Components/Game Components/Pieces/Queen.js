@@ -18,7 +18,6 @@ const Queen = (props) => {
     const [pieceUpdated, setPieceUpdated] = useState(false)
 
     useEffect (() => {
-        if(pieceUpdated != true ) {
             let downRightArray = MovePrediction({x: gameState.gameBoard[props.id].position.x + 1, y: gameState.gameBoard[props.id].position.y + 1}, {x: 8, y: 8}, gameState.gameBoard, props.player, 1, 'diagonal', 1)
             let downLeftArray = MovePrediction({x: gameState.gameBoard[props.id].position.x - 1, y: gameState.gameBoard[props.id].position.y + 1}, {x: 0, y: 8}, gameState.gameBoard, props.player, -1, 'diagonal', 1)
             let upRightArray = MovePrediction({x: gameState.gameBoard[props.id].position.x + 1 , y: gameState.gameBoard[props.id].position.y - 1}, {x: 8, y: 0}, gameState.gameBoard, props.player, 1, 'diagonal', -1)
@@ -28,20 +27,14 @@ const Queen = (props) => {
             let upArray = MovePrediction({x: gameState.gameBoard[props.id].position.x , y: gameState.gameBoard[props.id].position.y + 1}, {x: gameState.gameBoard[props.id].position.x, y: 8}, gameState.gameBoard, props.player)
             let downArray = MovePrediction({x: gameState.gameBoard[props.id].position.x , y: gameState.gameBoard[props.id].position.y - 1}, {x: gameState.gameBoard[props.id].position.x, y: 0}, gameState.gameBoard, props.player, -1)
             let moveArray = downRightArray.spaceArray.concat(downLeftArray.spaceArray, upRightArray.spaceArray, upLeftArray.spaceArray, leftArray.spaceArray, rightArray.spaceArray, downArray.spaceArray, upArray.spaceArray)
-                setMovePredictions({
-                    ...movePredictions,
-                    moveArray: moveArray
-                })
+            if(moveArray.length > 0) {
                 if( gameState.clientPlayer === props.player) {
                     dispatch(pieceUpdate({id: props.id, move: 'selectPiece', moves: moveArray}))
                 } else {
                 }
-                setPieceUpdated(true)
-
-        } else {
-            return
-        }
-    }, [pieceUpdated])
+                
+            }
+    }, [gameState.render])
 
     
 

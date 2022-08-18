@@ -51,7 +51,7 @@ const GameLobby = () => {
                 setIsPlayer(true)
                 clientPlayer = 2
             }
-            console.log(clientPlayer)
+            
             dispatch(clearGame())
             dispatch(setNewGame({ gameBoard: sanitizedResults.gameInfo.gameBoard, players: sanitizedResults.gameInfo.players, clientPlayer: clientPlayer, turn: sanitizedResults.gameInfo.playerTurn, id: sanitizedResults.gameInfo._id, name: sanitizedResults.gameInfo.name}))
             setGameInfo(sanitizedResults.gameInfo)
@@ -86,7 +86,7 @@ const GameLobby = () => {
     }
 
     useEffect(() => {
-        
+        console.log('room rendering')
         let isRunning = true
         fetchGameInfo()
         return () => {

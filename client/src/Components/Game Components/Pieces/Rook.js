@@ -18,27 +18,21 @@ const Rook = (props) => {
     const [pieceUpdated, setPieceUpdated] = useState(false)
 
     useEffect(() => {
-        if(pieceUpdated != true ) {
             let rightArray = MovePrediction({x: gameState.gameBoard[props.id].position.x + 1, y: gameState.gameBoard[props.id].position.y}, {x: 8, y: gameState.gameBoard[props.id].position.y}, gameState.gameBoard, props.player)
         let leftArray = MovePrediction({x: gameState.gameBoard[props.id].position.x - 1, y: gameState.gameBoard[props.id].position.y}, {x: 0, y: gameState.gameBoard[props.id].position.y}, gameState.gameBoard, props.player, -1)
         let upArray = MovePrediction({x: gameState.gameBoard[props.id].position.x , y: gameState.gameBoard[props.id].position.y + 1}, {x: gameState.gameBoard[props.id].position.x, y: 8}, gameState.gameBoard, props.player)
         let downArray = MovePrediction({x: gameState.gameBoard[props.id].position.x , y: gameState.gameBoard[props.id].position.y - 1}, {x: gameState.gameBoard[props.id].position.x, y: 0}, gameState.gameBoard, props.player, -1)
         let moveArray = rightArray.spaceArray.concat(leftArray.spaceArray, upArray.spaceArray, downArray.spaceArray)
-            setMovePredictions({
-                ...movePredictions,
-                moveArray: moveArray
-            })
+        if(moveArray.length > 0) {
             if( gameState.clientPlayer === props.player) {
                 dispatch(pieceUpdate({id: props.id, move: 'selectPiece', moves: moveArray}))
             } else {
             }
-            setPieceUpdated(true)
-        } else {
-            return
+            
         }
         
         
-    }, [pieceUpdated])
+    }, [gameState.render])
 
     return (<Box sx={{height: '100%', width: '100%'}}
       component="img"

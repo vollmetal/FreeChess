@@ -37,7 +37,6 @@ const GameList = () => {
         const result = await fetch(`${SERVER_PATH}/game/findall`)
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
-            console.log(sanitizedResult)
             setGameList({
                 ...gameList,
                 list: sanitizedResult.gameList})

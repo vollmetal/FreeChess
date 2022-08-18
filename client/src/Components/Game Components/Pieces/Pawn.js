@@ -19,28 +19,33 @@ const Pawn = (props) => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        if(pieceUpdated !== true) {
             let moveArray = []
             let captureArray = []
+            let position = {x: gameState.gameBoard[props.id].position.x, y: gameState.gameBoard[props.id].position.y}
             if(props.player == 1 && gameState) {
-                moveArray = moveArray.concat(MovePrediction({x: gameState.gameBoard[props.id].position.x, y: 1 + gameState.gameBoard[props.id].position.y}, {x: gameState.gameBoard[props.id].position.x, y: 2 + gameState.gameBoard[props.id].position.y}, gameState.gameBoard, props.player).spaceArray)
-                captureArray = captureArray.concat(MovePrediction({x: 1 +  gameState.gameBoard[props.id].position.x, y: 1 + gameState.gameBoard[props.id].position.y}, {x: 1 +  gameState.gameBoard[props.id].position.x, y: 1 + gameState.gameBoard[props.id].position.y}, gameState.gameBoard, props.player).spaceArray)
-                captureArray = captureArray.concat(MovePrediction({x: gameState.gameBoard[props.id].position.x - 1, y: 1 + gameState.gameBoard[props.id].position.y}, {x: gameState.gameBoard[props.id].position.x - 1, y: 1 + gameState.gameBoard[props.id].position.y}, gameState.gameBoard, props.player).spaceArray)
+                if(position.y == 2) {
+                    moveArray = moveArray.concat(MovePrediction({x: position.x, y: 1 + position.y}, {x: position.x, y: 2 + position.y}, gameState.gameBoard, props.player).spaceArray)
+                } else {
+                    moveArray = moveArray.concat(MovePrediction({x: position.x, y: 1 + position.y}, {x: position.x, y: 1 + position.y}, gameState.gameBoard, props.player).spaceArray)
+                }
+                
+                captureArray = captureArray.concat(MovePrediction({x: 1 +  position.x, y: 1 + position.y}, {x: 1 +  position.x, y: 1 + position.y}, gameState.gameBoard, props.player).spaceArray)
+                captureArray = captureArray.concat(MovePrediction({x: position.x - 1, y: 1 + position.y}, {x: position.x - 1, y: 1 + position.y}, gameState.gameBoard, props.player).spaceArray)
                                 
             } else if(props.player == 2 && gameState) {
                 
-                moveArray = moveArray.concat(MovePrediction({x: gameState.gameBoard[props.id].position.x, y: gameState.gameBoard[props.id].position.y - 1}, {x: gameState.gameBoard[props.id].position.x, y: gameState.gameBoard[props.id].position.y - 2}, gameState.gameBoard, props.player, -1).spaceArray)
-                captureArray = captureArray.concat(MovePrediction({x: 1 +  gameState.gameBoard[props.id].position.x, y: gameState.gameBoard[props.id].position.y - 1}, {x: 1 +  gameState.gameBoard[props.id].position.x, y: gameState.gameBoard[props.id].position.y - 1}, gameState.gameBoard, props.player, -1).spaceArray)
-                captureArray = captureArray.concat(MovePrediction({x: gameState.gameBoard[props.id].position.x - 1, y: gameState.gameBoard[props.id].position.y - 1}, {x: gameState.gameBoard[props.id].position.x - 1, y: gameState.gameBoard[props.id].position.y - 1}, gameState.gameBoard, props.player, -1).spaceArray)
+                if(position.y == 2) {
+                    moveArray = moveArray.concat(MovePrediction({x: position.x, y: position.y - 1}, {x: position.x, y: position.y - 2}, gameState.gameBoard, props.player, -1).spaceArray)
+                } else {
+                    moveArray = moveArray.concat(MovePrediction({x: position.x, y: position.y - 1}, {x: position.x, y: position.y - 1}, gameState.gameBoard, props.player, -1).spaceArray)
+                }
+                captureArray = captureArray.concat(MovePrediction({x: 1 +  position.x, y: position.y - 1}, {x: 1 +  position.x, y: position.y - 1}, gameState.gameBoard, props.player, -1).spaceArray)
+                captureArray = captureArray.concat(MovePrediction({x: position.x - 1, y: position.y - 1}, {x: position.x - 1, y: position.y - 1}, gameState.gameBoard, props.player, -1).spaceArray)
                                 
             }
             captureArray = captureArray.filter(element => {if(element.type == 'capture') {return element}})
             moveArray = moveArray.filter(element => {return element.type == 'move'})
             moveArray = moveArray.concat(captureArray)
-            setMovePredictions({
-                ...movePredictions,
-                moveArray: moveArray
-            })
             if(moveArray.length > 0) {
                 if( gameState.clientPlayer === props.player) {
                     dispatch(pieceUpdate({id: props.id, move: 'selectPiece', moves: moveArray}))
@@ -48,13 +53,7 @@ const Pawn = (props) => {
                 }
                 
             }
-            setPieceUpdated(true)
-
-        } else {
-            return
-        }
-        
-    }, [pieceUpdated])
+    }, [gameState.render])
 
     return (<Box sx={{height: '100%', width: '100%'}}
   component="img"
