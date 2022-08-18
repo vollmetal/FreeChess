@@ -18,6 +18,7 @@ io.on('connection', async (socket) => {
     })
     socket.on("disconnecting", () => {
         console.log(socket.rooms); // the Set contains at least the socket ID
+        
       });
     
       socket.on("disconnect", () => {
@@ -27,6 +28,7 @@ io.on('connection', async (socket) => {
     socket.on('listRoomJoin', (args) => {
         console.log('joined the room showing list of lobbies!')
         socket.join('listRoom')
+        socket.emit('listRoomJoined', 'handshake successful')
     })
     socket.on('leaveRooms', async (args) => {
         socket.leave('listRoom')
@@ -36,6 +38,7 @@ io.on('connection', async (socket) => {
                 const game = await Game.findById(args.gameId)
                 if(args.playerSide) {
                     let players = ''
+                    const currentPlayers = game.currentPlayers--
                     switch (args.playerSide) {
                         case 1:
                            players = {
@@ -73,7 +76,7 @@ io.on('connection', async (socket) => {
                     
                     const updateGame = await game.updateOne({
                         players: players,
-                        currentPlayers: game.currentPlayers--
+                        currentPlayers: currentPlayers
                     })
                 }
             }
@@ -153,7 +156,8 @@ gameRouter.post('/lobby/joinSide/:gameId', async (req, res) => {
     try {
         const game = await Game.findById(gameId)
         if (game.currentPlayers < 2) {
-            if (playerInfo.side == 1) {
+            const currentPlayers = game.currentPlayers++            
+            if (playerInfo.side == 1) {                
                 const updateGame = await game.updateOne({
                     players: {
                         1: {
@@ -167,7 +171,7 @@ gameRouter.post('/lobby/joinSide/:gameId', async (req, res) => {
                             score: game.players[2].score
                         }
                     },
-                    currentPlayers: game.currentPlayers++
+                    currentPlayers: currentPlayers
                 })
                 joinedSide = 'player 1'
             } else {
@@ -184,7 +188,7 @@ gameRouter.post('/lobby/joinSide/:gameId', async (req, res) => {
                             score: game.players[2].score
                         }
                     },
-                    currentPlayers: game.currentPlayers++
+                    currentPlayers: currentPlayers
                 })
                 joinedSide = 'player 2'
             }

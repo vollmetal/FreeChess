@@ -17,10 +17,14 @@ const GameList = () => {
     const [gettingInfo, setGettingInfo] = useState(true)
     const [gameList, setGameList] = useState([])
     const navigate = useNavigate()
+    let roomJoined = false
 
     useEffect(() => {
         socket.emit('listRoomJoin')
-        socket.on('lobbyListUpdate', getInfo())
+        socket.on('listRoomJoined', function(message){
+            console.log(message)
+            getInfo()})
+        socket.on('lobbyListUpdate', function(){getInfo()})
 
     }, [gettingInfo])
 
@@ -29,7 +33,7 @@ const GameList = () => {
     
 
     const getInfo = async () => {
-        setGettingInfo(true)
+        
         const result = await fetch(`${SERVER_PATH}/game/findall`)
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
@@ -38,6 +42,7 @@ const GameList = () => {
                 ...gameList,
                 list: sanitizedResult.gameList})
             makeListElements(sanitizedResult.gameList)
+            setGettingInfo(true)
         }
     }
 
