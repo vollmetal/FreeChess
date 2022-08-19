@@ -30,8 +30,10 @@ const King = (props) => {
         let moveArray = downRightArray.spaceArray.concat(downLeftArray.spaceArray, upRightArray.spaceArray, upLeftArray.spaceArray, leftArray.spaceArray, rightArray.spaceArray, downArray.spaceArray, upArray.spaceArray)
         if(moveArray.length > 0) {
             moveArray.map(position => {
-                if(gameState.gameBoard[position.index].piece === 'King' && gameState.gameBoard[position.index].player != props.player) {
-                    console.log('I can capture their king!')
+                    
+                if(gameState.gameBoard[position.index].piece === 'King' && gameState.gameBoard[position.index].player != props.player && gameState.gameBoard[position.index].player === gameState.clientPlayers) {
+                    console.log(gameState.gameBoard[position.index])
+                    console.log(`Piece ${props.id} can capture their king!`)
                 }
             })
             if( gameState.clientPlayer === props.player) {

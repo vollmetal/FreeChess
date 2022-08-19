@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { GoogleAuthProvider, getAuth, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut} from "firebase/auth"; 
+import { GoogleAuthProvider, getAuth, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, updateProfile} from "firebase/auth"; 
 import { getFirestore, query, getDocs, collection, where, addDoc} from "firebase/firestore";
+import { SERVER_PATH } from "../constants";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -30,6 +31,19 @@ const signInWithGoogle = async () => {
     const q = query(collection(db, "users"), where("uid", "==", user.uid));
     
     const docs = await getDocs(q);
+    const result = await fetch(`${SERVER_PATH}/user/getuser/${user.uid}`)
+        const userData = await result.json()
+        if(userData.success && userData.data) {
+          console.log(userData.data)
+        } else {
+            const result = await fetch(`${SERVER_PATH}/user/register`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({name: user.displayName, userId: user.uid})
+            })
+        }
     console.log(docs.docs.length)
     if (docs.docs.length === 0) {
       await addDoc(collection(db, "users"), {
@@ -43,6 +57,7 @@ const signInWithGoogle = async () => {
     console.error(err);
     alert(err.message);
   }
+  
 };
 
 const logInWithEmailAndPassword = async (email, password) => {
@@ -52,12 +67,30 @@ const logInWithEmailAndPassword = async (email, password) => {
       console.error(err);
       alert(err.message);
     }
+    
   };
 
   const registerWithEmailAndPassword = async (name, email, password) => {
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
       const user = res.user;
+      await updateProfile(user, {
+        displayName: name
+      })
+      
+      const result = await fetch(`${SERVER_PATH}/user/getuser/${user.uid}`)
+        const userData = await result.json()
+        if(userData.success && userData.data) {
+        } else {
+            const result = await fetch(`${SERVER_PATH}/user/register`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({name: name, userId: user.uid})
+            })
+        }
+      
       await addDoc(collection(db, "users"), {
         uid: user.uid,
         displayName: name,
@@ -68,6 +101,7 @@ const logInWithEmailAndPassword = async (email, password) => {
       console.error(err);
       alert(err.message);
     }
+    
   };
 
   const sendPasswordReset = async (email) => {

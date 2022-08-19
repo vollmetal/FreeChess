@@ -12,12 +12,17 @@ global.io = new Server(server, {
     }
   });
 
+global.socketInfo = {}
+
 app.use(express.json())
 app.use(cors())
 
 require('dotenv').config()
 
 const PORT = process.env.PORT || 8080 
+
+const userRoutes = require('./routes/userRoutes')
+app.use('/user', userRoutes)
 
 const gameRoutes = require('./routes/gameRoutes')
 app.use('/game', gameRoutes)

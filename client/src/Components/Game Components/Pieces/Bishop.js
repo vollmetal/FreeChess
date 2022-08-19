@@ -29,7 +29,9 @@ const Bishop = (props) => {
             
             if(moveArray.length > 0) {
                 moveArray.map(position => {
+                    
                     if(gameState.gameBoard[position.index].piece === 'King' && gameState.gameBoard[position.index].player != props.player) {
+                        console.log(gameState.gameBoard[position.index].piece)
                         console.log('I can capture their king!')
                     }
                 })

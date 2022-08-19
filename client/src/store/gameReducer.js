@@ -8,15 +8,18 @@ export const gameReducer = createSlice ({
         name: "placeholder",
         playerTurn: 1,
         clientPlayer: 0,
-        players: [{
-            id: '',
-            name: '',
-            score: 0
-        }, {
-            id: '',
-            name: '',
-            score: 0
-        }],
+        players: {
+            1: {
+                uid: '',
+                name: '',
+                score: 0
+            },
+            2: {
+                uid: '',
+                name: '',
+                score: 0
+            }
+        },
         gameBoard: ['this'],
         piecesUpdated: false,
         render: true,
@@ -39,15 +42,18 @@ export const gameReducer = createSlice ({
         state.name = "placeholder"
         state.playerTurn = 1
         state.clientPlayer = 0
-        state.players = [{
-            id: '',
-            name: '',
-            score: 0
-        }, {
-            id: '',
-            name: '',
-            score: 0
-        }]
+        state.players = {
+            1: {
+                uid: '',
+                name: '',
+                score: 0
+            },
+            2: {
+                uid: '',
+                name: '',
+                score: 0
+            }
+        }
         state.gameBoard = ['this']
         state.movePieces = []
         state.movePiece = 0

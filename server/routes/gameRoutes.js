@@ -10,6 +10,7 @@ gameRouter.get('/', (req, res) => {
 
 io.on('connection', async (socket) => {
     console.log('connected!')
+    
     socket.on('joinRoom', (args) => {
         console.log(args)
         socket.leave('listRoom')
@@ -17,11 +18,20 @@ io.on('connection', async (socket) => {
         console.log(socket.rooms)
     })
     socket.on("disconnecting", () => {
-        console.log(socket.rooms); // the Set contains at least the socket ID
+        console.log(socket); // the Set contains at least the socket ID
+        console.log('disconnecting')
         
       });
     
       socket.on("disconnect", () => {
+        if(socket.rooms.length > 1) {
+            for (let index = 0; index < socket.rooms.length; index++) {
+                const element = socket.rooms[index];
+                if(element.contains('room - ')) {
+                    io.to(element).emit('userDisconnected')
+                }
+            }
+        }
         socket.rooms.size === 0
       });
 
@@ -40,7 +50,7 @@ io.on('connection', async (socket) => {
                 const game = await Game.findById(args.gameId)
                 if(args.playerSide) {
                     let players = ''
-                    const currentPlayers = game.currentPlayers--
+                    let currentPlayers = game.currentPlayers
                     switch (args.playerSide) {
                         case 1:
                            players = {
@@ -54,7 +64,8 @@ io.on('connection', async (socket) => {
                                     name: game.players[2].name,
                                     score: game.players[2].score
                                 }
-                            }                            
+                            }
+                            currentPlayers = game.currentPlayers--                            
                             break;
 
                             case 2:
@@ -70,7 +81,7 @@ io.on('connection', async (socket) => {
                                         score: game.players[2].score
                                     }
                                 }
-                            
+                                currentPlayers = game.currentPlayers--
                                 break;                    
                         default:
                             break;
@@ -133,7 +144,6 @@ gameRouter.get('/join/:gameId', async (req, res) => {
 
     try {
         const game = await Game.findById(gameId)
-        if (game.currentPlayers < 2) {
             if (game.players[1].uid != '') {
                 openSides.push(false)
             } else {
@@ -145,7 +155,6 @@ gameRouter.get('/join/:gameId', async (req, res) => {
                 openSides.push(true)
             }
             res.json({ success: true, message: `Welcome to ${game.name}! Please choose which side you want to be on!`, openSlots: openSides })
-        }
     } catch {
         res.json({ success: false, message: 'ERROR: failed to fetch game info!', currentData: gameId })
     }

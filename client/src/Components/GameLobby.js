@@ -1,4 +1,4 @@
-import { Button, Card, Skeleton } from "@mui/material";
+import { Button, Card, Skeleton, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -43,6 +43,15 @@ const GameLobby = () => {
         }
     })
 
+    socket.on('userDisconnected', () => {
+        console.log('user disconnected')
+        if(isLoading) {
+            setLoading(false)
+        } else {
+            setLoading(true)
+        }
+    })
+
     socket.on('userJoin', () => {
         console.log('user has joined the game')
         if(isLoading) {
@@ -60,13 +69,15 @@ const GameLobby = () => {
         if(sanitizedResults.success) {
             let players = []
             let clientPlayer = -1
-            if( sanitizedResults.gameInfo.players[1].uid === user.uid) {
-                setIsPlayer(true)
-                clientPlayer = 1
-            } else if (sanitizedResults.gameInfo.players[2].uid === user.uid) {
-                setIsPlayer(true)
-                clientPlayer = 2
-            }
+            if(user) {
+                if( sanitizedResults.gameInfo.players[1].uid === user.uid) {
+                    setIsPlayer(true)
+                    clientPlayer = 1
+                } else if (sanitizedResults.gameInfo.players[2].uid === user.uid) {
+                    setIsPlayer(true)
+                    clientPlayer = 2
+                }
+            }            
             
             dispatch(clearGame())
             dispatch(setNewGame({ gameBoard: sanitizedResults.gameInfo.gameBoard, players: sanitizedResults.gameInfo.players, clientPlayer: clientPlayer, turn: sanitizedResults.gameInfo.playerTurn, id: sanitizedResults.gameInfo._id, name: sanitizedResults.gameInfo.name}))
@@ -112,14 +123,15 @@ const GameLobby = () => {
     }, [user, isLoading])
 
     return (
-        <Box sx={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <Box sx={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%'}}>
             <Card sx={{margin: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                {isPlayer ? <Box>
-
-                </Box>: <Box sx={{width: '100%', display: 'flex'}}>
+                {!user ? <Typography>Please log in to join the game</Typography>: <Box>
+                {isPlayer ? <Box />:
+                  <Box sx={{width: '100%', display: 'flex'}}>
+                    {gameInfo.clientPlayer === gameInfo.playerTurn ? <Typography >It is your turn!</Typography>: null}
                     {gameInfo.players ? <Button sx={{margin: '20px'}} disabled={(gameInfo.players[1].uid !== '')} onClick={()=> {joinAsPlayer(1)}} variant="contained">Join as Player 1</Button>: <Skeleton></Skeleton>}
                     {gameInfo.players ? <Button sx={{margin: '20px'}} disabled={(gameInfo.players[2].uid !== '')} onClick={()=> {joinAsPlayer(2)}} variant="contained">Join as Player 2</Button>: <Skeleton></Skeleton>}
-                    </Box>}
+                    </Box>}</Box>}
             </Card>
             <Card sx={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', background: mainTheme.palette.primary.light}}>
                 <GamePage />
