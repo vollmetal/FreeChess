@@ -1,4 +1,4 @@
-import { Button, Card, Skeleton } from "@mui/material";
+import { Button, Card, Skeleton, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { socket } from "..";
 import { GridSetup, SERVER_PATH } from "../constants";
 import { auth } from "../Functions/firestore";
-import { setNewGame } from "../store/gameReducer";
+import { clearGame, setClientPlayer, setNewGame } from "../store/gameReducer";
 import { mainTheme } from "../Themes";
 import GamePage from "./Game Components/GamePage";
 
@@ -25,6 +25,35 @@ const GameLobby = () => {
 
     
     socket.on('updateRoom', () => {
+        console.log('received Room Update')
+        
+        if(isLoading) {
+            setLoading(false)
+        } else {
+            setLoading(true)
+        }
+    })
+
+    socket.on('userLeft', () => {
+        console.log('user has left the game')
+        if(isLoading) {
+            setLoading(false)
+        } else {
+            setLoading(true)
+        }
+    })
+
+    socket.on('userDisconnected', () => {
+        console.log('user disconnected')
+        if(isLoading) {
+            setLoading(false)
+        } else {
+            setLoading(true)
+        }
+    })
+
+    socket.on('userJoin', () => {
+        console.log('user has joined the game')
         if(isLoading) {
             setLoading(false)
         } else {
@@ -34,23 +63,24 @@ const GameLobby = () => {
 
     
 
-    
-
     const fetchGameInfo = async () => {
         const results = await fetch(`${SERVER_PATH}/game/loadGame/${gameId}`)
         const sanitizedResults = await results.json()
         if(sanitizedResults.success) {
             let players = []
             let clientPlayer = -1
-            if( sanitizedResults.gameInfo.players[1].uid === user.uid) {
-                setIsPlayer(true)
-                clientPlayer = 1
-            } else if (sanitizedResults.gameInfo.players[2].uid === user.uid) {
-                setIsPlayer(true)
-                clientPlayer = 2
-            }
-            console.log(clientPlayer)
-            dispatch(setNewGame({ gameBoard: GridSetup(9,9), gamePieces: sanitizedResults.gameInfo.boardPieces, players: sanitizedResults.gameInfo.players, clientPlayer: clientPlayer, turn: sanitizedResults.gameInfo.playerTurn, id: sanitizedResults.gameInfo._id, name: sanitizedResults.gameInfo.name}))
+            if(user) {
+                if( sanitizedResults.gameInfo.players[1].uid === user.uid) {
+                    setIsPlayer(true)
+                    clientPlayer = 1
+                } else if (sanitizedResults.gameInfo.players[2].uid === user.uid) {
+                    setIsPlayer(true)
+                    clientPlayer = 2
+                }
+            }            
+            
+            dispatch(clearGame())
+            dispatch(setNewGame({ gameBoard: sanitizedResults.gameInfo.gameBoard, players: sanitizedResults.gameInfo.players, clientPlayer: clientPlayer, turn: sanitizedResults.gameInfo.playerTurn, id: sanitizedResults.gameInfo._id, name: sanitizedResults.gameInfo.name}))
             setGameInfo(sanitizedResults.gameInfo)
         } else {
 
@@ -73,14 +103,17 @@ const GameLobby = () => {
             body: JSON.stringify(data)})
         const sanitizedResults = await result.json()
         if(sanitizedResults.success) {
+            console.log(sanitizedResults.message)
             setIsPlayer(true)
+            dispatch(setClientPlayer(player))
             
         } else {
-
+            console.log(sanitizedResults.message)
         }
     }
 
     useEffect(() => {
+        console.log('room rendering')
         let isRunning = true
         fetchGameInfo()
         return () => {
@@ -90,17 +123,18 @@ const GameLobby = () => {
     }, [user, isLoading])
 
     return (
-        <Box sx={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <Box sx={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%'}}>
             <Card sx={{margin: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                {isPlayer ? <Box>
-
-                </Box>: <Box sx={{width: '100%', display: 'flex'}}>
+                {!user ? <Typography>Please log in to join the game</Typography>: <Box>
+                {isPlayer ? <Box />:
+                  <Box sx={{width: '100%', display: 'flex'}}>
+                    {gameInfo.clientPlayer === gameInfo.playerTurn ? <Typography >It is your turn!</Typography>: null}
                     {gameInfo.players ? <Button sx={{margin: '20px'}} disabled={(gameInfo.players[1].uid !== '')} onClick={()=> {joinAsPlayer(1)}} variant="contained">Join as Player 1</Button>: <Skeleton></Skeleton>}
                     {gameInfo.players ? <Button sx={{margin: '20px'}} disabled={(gameInfo.players[2].uid !== '')} onClick={()=> {joinAsPlayer(2)}} variant="contained">Join as Player 2</Button>: <Skeleton></Skeleton>}
-                    </Box>}
+                    </Box>}</Box>}
             </Card>
             <Card sx={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', background: mainTheme.palette.primary.light}}>
-                <GamePage gameInfo={gameInfo}/>
+                <GamePage />
             </Card>
         </Box>
     )

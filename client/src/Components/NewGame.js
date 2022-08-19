@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { socket } from "..";
-import { makeNewGamePieces, SERVER_PATH } from "../constants";
+import { GridSetup, makeNewGamePieces, SERVER_PATH } from "../constants";
 import { auth } from "../Functions/firestore";
 
 
@@ -13,15 +13,15 @@ import { auth } from "../Functions/firestore";
 const NewGame = () => {
     const [user, loading, error] = useAuthState(auth)
 
-    const [newGameInfo, setNewGameInfo] = useState({boardPieces: makeNewGamePieces(9, 9), players: {
+    const [newGameInfo, setNewGameInfo] = useState({gameBoard: GridSetup(9,9),  players: {
         1: {
             uid: '',
             name: '',
-            score: 0
+            pieces: 16
         }, 2: {
             uid: '',
             name: '',
-            score: 0
+            pieces: 16
      }}})
     
 

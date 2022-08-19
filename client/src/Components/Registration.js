@@ -1,6 +1,7 @@
 import { Box, Button, Card, Container, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useNavigate } from 'react-router-dom';
 import { auth, registerWithEmailAndPassword } from '../Functions/firestore';
 
 
@@ -11,6 +12,8 @@ const Registration = () => {
 
     const [registerCredentials, setRegisterCredentials] = useState()
     const [user, loading, error] = useAuthState(auth)
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (loading) {
@@ -27,6 +30,11 @@ const Registration = () => {
             [e.target.name]: e.target.value
         })
     }
+
+    const registerEmail = async () => {
+        await registerWithEmailAndPassword(registerCredentials.username, registerCredentials.email, registerCredentials.password)
+        navigate('/')
+      }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -81,7 +89,7 @@ const Registration = () => {
                         fullWidth
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
-                        onClick={() => { registerWithEmailAndPassword(registerCredentials.username, registerCredentials.email, registerCredentials.password) }}
+                        onClick={registerEmail}
                     >
                         Sign In
                     </Button>

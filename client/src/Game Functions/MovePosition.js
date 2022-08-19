@@ -8,7 +8,6 @@ const movePosition = (x, y, targetBoard, targetPieceArray, pieceId, player) => {
     let targetPosition = {x: x, y: y}
     let targetSpace = getSquareIndexFromCoords(targetPosition, targetBoard)
     let targetPiece = getSquareIndexFromCoords(targetPosition, targetPieceArray)
-    console.log(`Target Space - ${targetSpace} || Target Piece - ${targetPiece} || Piece Position x - ${targetPieceArray[pieceId].position.x} || Piece Position y - ${targetPieceArray[pieceId].position.y}`)
     if(targetSpace !== -1) {
         if(targetPiece !== -1) {
             if(targetPieceArray[targetPiece].player !== player) {

@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, current } from '@reduxjs/toolkit';
 
 
 export const gameReducer = createSlice ({
@@ -8,73 +8,118 @@ export const gameReducer = createSlice ({
         name: "placeholder",
         playerTurn: 1,
         clientPlayer: 0,
-        players: [{
-            id: '',
-            name: '',
-            score: 0
-        }, {
-            id: '',
-            name: '',
-            score: 0
-        }],
+        players: {
+            1: {
+                uid: '',
+                name: '',
+                score: 0
+            },
+            2: {
+                uid: '',
+                name: '',
+                score: 0
+            }
+        },
         gameBoard: ['this'],
-        gamePieces: [],
-        movePiece: 0,
-        spaceModifiers: [],
+        piecesUpdated: false,
+        render: true,
         gameState: ''
     },
     reducers: {
         setNewGame: (state, action) => {
                   state.gameBoard = action.payload.gameBoard
-                  state.gamePieces = action.payload.gamePieces
                   state.players = action.payload.players
                   state.clientPlayer = action.payload.clientPlayer
                   state.gameState = 'waiting'
                   state.name = action.payload.name
                   state.id = action.payload.id
                   state.playerTurn = action.payload.turn
+                  state.render = true
+        },
+
+        clearGame: (state) => {
+        state.id = ""
+        state.name = "placeholder"
+        state.playerTurn = 1
+        state.clientPlayer = 0
+        state.players = {
+            1: {
+                uid: '',
+                name: '',
+                score: 0
+            },
+            2: {
+                uid: '',
+                name: '',
+                score: 0
+            }
+        }
+        state.gameBoard = ['this']
+        state.movePieces = []
+        state.movePiece = 0
+        state.render = true
+        state.gameState = ''
+        },
+
+        finishRender: (state) => {
+            state.render = false
+        },
+
+        pieceUpdate: (state, action) => {
+            state.gameBoard[action.payload.id].move = action.payload.move
+            state.gameBoard[action.payload.id].moves = action.payload.moves
         },
 
         moveStart: (state, action) => {
-            state.spaceModifiers = action.payload.emptySpaces
-            state.gamePieces = action.payload.captureSpaces
-            state.movePiece = action.payload.id
-            state.gameState = 'clientMoving'
+            const temp = state.gameBoard[action.payload].moves
+            state.gameBoard = state.gameBoard.map(piece => {
+                return {position: piece.position, color: piece.color, piece: piece.piece, player: piece.player, move: ''}
+            })
+            temp.forEach(element => {
+                
+                state.gameBoard[element.index].move = element.type
+                state.gameBoard[element.index].pieceIndex = action.payload
+                console.log(state.gameBoard[element.index].move)
+            });
+            
+            state.render = true
         },
 
         moveCancel: (state) => {
-            state.spaceModifiers = []
-            state.movePiece = 0
-            state.gamePieces = state.gamePieces.map(piece => {
-                return {position: piece.position, piece: piece.piece, player: piece.player, capture: false}
+            state.gameBoard = state.gameBoard.map(piece => {
+                return {position: piece.position, color: piece.color, piece: piece.piece, player: piece.player, move: ''}
             })
+            state.render = true
             state.gameState = 'clientWaiting'
         },
 
         moveFinish: (state, action) => {
+            state.gameBoard[action.payload.spaceId].piece = action.payload.movePiece
+            state.gameBoard[action.payload.spaceId].player = state.clientPlayer
+            state.gameBoard[action.payload.spaceId].move = ''
+
+            state.gameBoard[action.payload.movePieceId].piece = ''
+            state.gameBoard[action.payload.movePieceId].player = 0
+            state.gameBoard = state.gameBoard.map(piece => {
+                return {position: piece.position, color: piece.color, piece: piece.piece, player: piece.player, move: ''}
+            })
             
-            console.log(state.gamePieces)
-            state.gamePieces = action.payload
-            state.movePiece = 0
-            state.spaceModifiers = []
+            state.gameState = 'clientWaiting'
             if(state.playerTurn === 1) {
                 state.playerTurn = 2
             } else {
                 state.playerTurn = 1
             }
-            state.gameState = 'otherPlayerTurn'
+            state.render = true
         },
 
         setClientPlayer: (state, action) => {
-            if(state.players[0].id === action.payload.id) {
-                state.players[0].clientPlayer = true
-            } else if(state.players[1].id === action.payload.id) {
-                state.players[1].clientPlayer = true
-            }
+            state.clientPlayer = action.payload
+            state.render = true
         }
     }
 })
 
-export const { setNewGame, moveStart, moveCancel, moveFinish, makePiece, setClientPlayer } = gameReducer.actions;
+export const { setNewGame, clearGame, moveStart, moveCancel, moveFinish, makePiece, setClientPlayer, pieceUpdate, finishRender } = gameReducer.actions;
 
 export default gameReducer.reducer;

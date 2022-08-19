@@ -17,10 +17,15 @@ const GameList = () => {
     const [gettingInfo, setGettingInfo] = useState(true)
     const [gameList, setGameList] = useState([])
     const navigate = useNavigate()
+    let roomJoined = false
 
     useEffect(() => {
         socket.emit('listRoomJoin')
-        socket.on('lobbyListUpdate', getInfo())
+        socket.on('listRoomJoined', function(message){
+            console.log(message)
+            getInfo()})
+        socket.on('lobbyListUpdate', function(){getInfo()})
+        console.log(user)
 
     }, [gettingInfo])
 
@@ -29,15 +34,15 @@ const GameList = () => {
     
 
     const getInfo = async () => {
-        setGettingInfo(true)
+        
         const result = await fetch(`${SERVER_PATH}/game/findall`)
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
-            console.log(sanitizedResult)
             setGameList({
                 ...gameList,
                 list: sanitizedResult.gameList})
             makeListElements(sanitizedResult.gameList)
+            setGettingInfo(true)
         }
     }
 
@@ -45,7 +50,9 @@ const GameList = () => {
         const result = await fetch(`${SERVER_PATH}/game/join/${gameId}`)
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
-            socket.emit('joinRoom', {uid: user.uid, name: user.displayName, roomId: gameId})
+            
+                socket.emit('joinRoom', {roomId: gameId})
+            
             navigate(`/lobby/${gameId}`)
         } else {
             console.log(sanitizedResult.message)
@@ -54,7 +61,7 @@ const GameList = () => {
 
     const makeListElements = (list) => {
         const listElements = list.map(game => {
-            return (<Card sx={{margin: '10%', background: mainTheme.palette.primary.light}} key={`id-${game._id}`}>
+            return (<Card sx={{margin: '5%', background: mainTheme.palette.primary.light, padding: '2%'}} key={`id-${game._id}`}>
                 <CardContent>
                 <Typography variant="h5">{game.name}</Typography>
                 <Typography variant="body2">Current Players: {game.currentPlayers}</Typography> 
@@ -75,8 +82,8 @@ const GameList = () => {
 
 
     return (
-        <Box>
-            <NavLink to='/newGame'><Button sx={{margin: '10px'}} variant="contained"> Make New Game</Button></NavLink>
+        <Box sx={{display: 'flex'}}>
+            <NavLink style={{textDecoration: 'none'}} to='/newGame'><Button sx={{margin: '10px'}} variant="contained"> Make New Game</Button></NavLink>
 
             {gameList.elements}
 

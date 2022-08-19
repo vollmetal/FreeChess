@@ -12,45 +12,29 @@ export const GridSetup = (x, y) => {
     let currentX = 1
     let currentY = 1
     let color = ''
+    let player = 1
     let piece = ''
+    
     while (currentX < x) {
         if (color == 'white') {
             color = '#061fab'
         } else {
             color = 'white'
         }
+        
         while (currentY < y) {
+            let player = 1
+            let piece = ''
+            if (currentY == 1 || currentY == 2) {
+                player = 1
+            } else {
+                player = 2
+            }
             if (color == 'white') {
                 color = '#061fab'
             } else {
                 color = 'white'
             }
-
-            outputGrid.push({ position: { x: currentX, y: currentY }, color: color })
-            currentY++;
-        }
-
-        currentX++;
-        currentY = 1;
-    }
-    return outputGrid
-}
-
-export const makeNewGamePieces = (x, y) => {
-    let outputPieces = []
-    let currentX = 1
-    let currentY = 1
-    while (currentY < y) {
-        let player = 1
-        let piece = ''
-        if (currentY == 1 || currentY == 2) {
-            player = 1
-        } else {
-            player = 2
-        }
-
-        while (currentX < x) {
-
             switch (currentY) {
                 case 1:
                     switch (currentX) {
@@ -125,15 +109,13 @@ export const makeNewGamePieces = (x, y) => {
                 default:
                     break;
             }
-            if (piece != '') {
-                outputPieces.push({ position: { x: currentX, y: currentY }, piece: piece, player: player, capture: false })
-            }
 
-            currentX++;
+            outputGrid.push({ position: { x: currentX, y: currentY }, color: color, piece: piece, player: player, canMove: false, move: ''  })
+            currentY++;
         }
 
-        currentY++;
-        currentX = 1;
+        currentX++;
+        currentY = 1;
     }
-    return outputPieces
+    return outputGrid
 }

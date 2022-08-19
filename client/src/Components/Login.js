@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Card, Checkbox, Container, CssBaseline, FormControlLabel, Grid, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { auth, logInWithEmailAndPassword, signInWithGoogle } from '../Functions/firestore';
 
 
@@ -9,6 +9,8 @@ const Login = (props) => {
 
     const [loginCredentials, setLoginCredentials] = useState()
     const [user, loading, error] = useAuthState(auth)
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         if(loading) {
@@ -24,6 +26,11 @@ const Login = (props) => {
             ...loginCredentials,
             [e.target.name]: e.target.value
         })
+    }
+
+    const loginEmail = async () => {
+      await logInWithEmailAndPassword(loginCredentials.email, loginCredentials.password)
+      navigate('/')
     }
 
     return (
@@ -63,15 +70,11 @@ const Login = (props) => {
               autoComplete="current-password"
               onChange={updateCredentials}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Button
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={() => {logInWithEmailAndPassword(loginCredentials.email, loginCredentials.password)}}
+              onClick={loginEmail}
             >
               Sign In
             </Button>
