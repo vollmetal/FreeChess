@@ -1,5 +1,7 @@
 import Header from "./Header";
-import { Box } from "@mui/material"
+import { Box, ThemeProvider } from "@mui/material"
+import { useSelector } from "react-redux";
+import { themeMap } from "../Themes";
 
 
 
@@ -7,11 +9,18 @@ import { Box } from "@mui/material"
 
 function PageBase(props) {
 
+    const userState = useSelector(state => state.user)
+    
+
     return (
-        <Box>
-            <Header />
-            {props.children}
-        </Box>
+
+        
+            <Box>
+                <ThemeProvider theme={themeMap[userState.uiColors]}>
+                <Header />
+                {props.children}
+                </ThemeProvider>
+            </Box>
 
     );
 

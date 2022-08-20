@@ -7,6 +7,7 @@ const connectionSchema =  new mongoose.Schema({
     socketId: String,
     player1Pieces: String,
     player2Pieces: String,
+    boardColors: Array,
     themeColors: String
 })
 

@@ -1,4 +1,5 @@
-import { Button, Card, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from "@mui/material";
+import { useTheme } from "@emotion/react";
+import { Button, Card, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -12,6 +13,8 @@ import { auth } from "../Functions/firestore";
 
 const NewGame = () => {
     const [user, loading, error] = useAuthState(auth)
+
+    const theme = useTheme()
 
     const [newGameInfo, setNewGameInfo] = useState({gameBoard: GridSetup(9,9),  players: {
         1: {
@@ -44,31 +47,26 @@ const NewGame = () => {
         })
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
-            console.log(sanitizedResult.message)
+            console.log(sanitizedResult)
             socket.emit('newGameLobby')
-            navigate('/game')
+            socket.emit('joinRoom', {roomId: sanitizedResult.game._id})
+            navigate(`/lobby/${sanitizedResult.game._id}`)
         }
     }
 
     return (
-        <Box>
-            <Card sx={{ padding: '20px' }}>
-                <Box>
-                    <TextField onChange={onTextChange} id="outlined-basic" helperText="Game Name" name='gameName' variant="outlined" />
-                    <FormControl>
-                        <FormLabel id="playerSide">Which side do you want to play?</FormLabel>
-                        <RadioGroup
-                            row
-                            name="playerSide"
-                        >
-                            <FormControlLabel value="White" control={<Radio />} label="White" />
-                            <FormControlLabel value="Black" control={<Radio />} label="Black" />
-                        </RadioGroup>
-                    </FormControl>
-                </Box>
+            <Card sx={{display: 'flex', flexDirection: 'column',  padding: '20px' }}>
+                <Typography textAlign='center' variant='h4'>Make a New Game</Typography>
+                <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Name"
+                        name="gameName"
+                        onChange={onTextChange}
+                    />
                 <Button onClick={createGame} variant="contained">Create Game</Button>
             </Card>
-        </Box>
     )
 
 }

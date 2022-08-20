@@ -8,7 +8,6 @@ import { socket } from "..";
 import { GridSetup, SERVER_PATH } from "../constants";
 import { auth } from "../Functions/firestore";
 import { clearGame, setClientPlayer, setNewGame } from "../store/gameReducer";
-import { mainTheme } from "../Themes";
 import GamePage from "./Game Components/GamePage";
 
 
@@ -133,7 +132,7 @@ const GameLobby = () => {
                     {gameInfo.players ? <Button sx={{margin: '20px'}} disabled={(gameInfo.players[2].uid !== '')} onClick={()=> {joinAsPlayer(2)}} variant="contained">Join as Player 2</Button>: <Skeleton></Skeleton>}
                     </Box>}</Box>}
             </Card>
-            <Card sx={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', background: mainTheme.palette.primary.light}}>
+            <Card sx={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <GamePage />
             </Card>
         </Box>

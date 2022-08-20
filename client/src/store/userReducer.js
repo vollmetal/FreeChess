@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { mainTheme } from '../Themes';
 
 
 export const userReducer = createSlice({
@@ -7,8 +8,9 @@ export const userReducer = createSlice({
         email: '',
         username: '',
         photoURL: '',
-        playerPiece: ['white', 'black'],
-        uiColors: ''
+        playerPiece: ['White', 'Black'],
+        boardColors: ['white', 'black'],
+        uiColors: 'Basic'
     },
     reducers: {
         login: (state, action) => {
@@ -16,6 +18,7 @@ export const userReducer = createSlice({
             state.username = action.payload.displayName
             state.photoURL = action.payload.photoURL
             state.playerPiece = action.payload.playerPiece
+            state.boardColors = action.payload.boardColors
             state.uiColors = action.payload.uiColors
         },
 
@@ -23,12 +26,20 @@ export const userReducer = createSlice({
             state.email = ''
             state.username = ''
             state.photoURL = ''
-            state.playerPiece = ['white', 'black']
-            state.uiColors = ''
+            state.playerPiece = ['White', 'Black']
+            state.uiColors = 'Basic'
+        },
+
+        setplayerPieces: (state, action) => {
+            state.playerPiece = action.payload.pieces
+        },
+
+        setBoardColor: (state, action) => {
+            state.boardColors = action.payload.color
         }
     }
 })
 
-export const { login, logoutUser } = userReducer.actions;
+export const { login, logoutUser, setplayerPieces, setBoardColor } = userReducer.actions;
 
 export default userReducer.reducer;

@@ -15,9 +15,8 @@ import GameList from './Components/GameList';
 import Registration from './Components/Registration';
 
 import { io } from "socket.io-client";
-import { SERVER_PATH } from './constants';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { mainTheme } from './Themes';
+import ProfilePage from './Components/Profile/ProfilePage';
 
 
 export const socket = io('http://localhost:4201');
@@ -28,23 +27,22 @@ socket.connect()
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ThemeProvider theme={mainTheme}>
-    <BrowserRouter>
-    <CssBaseline enableColorScheme  />
-    <Provider store={store}>
-    <PageBase>
-      <Routes>
-          <Route path='/' element = {<MainPage />}/>
-          <Route path='/game' element = {<GameList/>}/>
-          <Route path='/newGame' element = {<NewGame />} />
-          <Route path='/login' element = {<Login/>}/>
-          <Route path='/registration' element = {<Registration />} />
-          <Route path='/lobby/:gameId' element = {<GameLobby />} />
-      </Routes>
-    </PageBase>
-    </Provider>
-    </BrowserRouter>
-    </ThemeProvider>
+      <BrowserRouter>
+        <CssBaseline enableColorScheme />
+        <Provider store={store}>
+          <PageBase>
+            <Routes>
+              <Route path='/' element={<MainPage />} />
+              <Route path='/game' element={<GameList />} />
+              <Route path='/newGame' element={<NewGame />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/registration' element={<Registration />} />
+              <Route path='/lobby/:gameId' element={<GameLobby />} />
+              <Route path='/userpage' element={<ProfilePage />} />
+            </Routes>
+          </PageBase>
+        </Provider>
+      </BrowserRouter>
   </React.StrictMode>
 );
 
