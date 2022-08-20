@@ -12,7 +12,6 @@ import Knight from "./Pieces/Knight"
 import Pawn from "./Pieces/Pawn"
 import Queen from "./Pieces/Queen"
 import Rook from "./Pieces/Rook"
-import ValidMove from "./ValidMove"
 
 
 
@@ -23,6 +22,7 @@ const GamePage = (props) => {
     const [user, loading, error] = useAuthState(auth)
 
     const gameState = useSelector(state => state.game)
+    const userState = useSelector(state => state.user)
     const dispatch = useDispatch()
 
     const [gameBoard, setGameBoard] = useState({})
@@ -72,7 +72,7 @@ const GamePage = (props) => {
 
         for (let index = 0; index < grid.length; index++) {
             const element = grid[index];
-            gameBoardElements.push(<Box sx={{ backgroundColor: element.color, gridColumn: element.position.x + 1, gridRow: element.position.y, aspectRatio: '1/ 1' }} key={`${index}`} >
+            gameBoardElements.push(<Box sx={{ backgroundColor: userState.boardColors[element.color], gridColumn: element.position.x + 1, gridRow: element.position.y, aspectRatio: '1/ 1' }} key={`${index}`} >
 
                 {element.move == 'selectPiece' && gameState.playerTurn === gameState.clientPlayer ? <Button onClick={() => { startMove(index) }} sx={{ width: '100%', height: '100%', padding: '0px', borderStyle: 'solid', borderWidth: '3px', borderColor: 'gray' }}>{element.piece == 'Pawn' ? <Pawn id={index} player={element.player} /> :
                     element.piece == 'Rook' ? <Rook id={index} player={element.player} /> :
@@ -114,7 +114,7 @@ const GamePage = (props) => {
                 {gameState.players[2].uid === '' ? <Typography>Player 2 is empty</Typography> : <Typography>Player 2: {gameState.players[2].name} {gameState.playerTurn === 2 ? 'Current Turn' : ''}</Typography>}
             </Card>
 
-            <Box sx={{ borderStyle: 'solid', display: 'grid', gridTemplateRows: 'repeat(9, minmax(0px, 1fr))', gridTemplateColumns: 'repeat(9, minmax(0px, 1fr))', justifyItems: 'stretch', height: '100%', width: '100%' }}>
+            <Box sx={{ borderStyle: 'solid',borderWidth: '5px', display: 'grid', gridTemplateRows: 'repeat(9, minmax(0px, 1fr))', gridTemplateColumns: 'repeat(9, minmax(0px, 1fr))', justifyItems: 'stretch', height: '100%', width: '100%' }}>
                 <Box sx={{
                     backgroundColor: 'white',
                     borderWidth: '2px',

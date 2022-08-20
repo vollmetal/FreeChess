@@ -16,6 +16,7 @@ userRouter.post('/register', (req, res) => {
             socketId: '',
             player1Pieces: 'White',
             player2Pieces: 'Black',
+            boardColors: ['white', 'black'],
             themeColors: 'Basic'
         })
         newUser.save(error => {
@@ -25,6 +26,23 @@ userRouter.post('/register', (req, res) => {
                 res.json({ success: true, message: `User successfully registered!`})
             }
         })
+    }
+})
+
+userRouter.post('/update/:userId', async (req, res) => {
+    const changedValues = req.body
+    try {
+        console.log(req.params.userId)
+        const user = await Connection.findOne({userId: req.params.userId})
+        console.log(user)
+        const result = await user.updateOne({
+            player1Pieces: changedValues.pieces[0],
+            player2Pieces: changedValues.pieces[1],
+            boardColors: changedValues.boardColors
+        })
+        res.json({success: true, message: 'user updated!', data: result})
+    } catch {
+        res.json({success:false , message: 'failed to update user!'})
     }
 })
 

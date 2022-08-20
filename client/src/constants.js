@@ -16,10 +16,10 @@ export const GridSetup = (x, y) => {
     let piece = ''
     
     while (currentX < x) {
-        if (color == 'white') {
-            color = '#061fab'
+        if (color == 0) {
+            color = 1
         } else {
-            color = 'white'
+            color = 0
         }
         
         while (currentY < y) {
@@ -30,10 +30,10 @@ export const GridSetup = (x, y) => {
             } else {
                 player = 2
             }
-            if (color == 'white') {
-                color = '#061fab'
+            if (color == 0) {
+                color = 1
             } else {
-                color = 'white'
+                color = 0
             }
             switch (currentY) {
                 case 1:

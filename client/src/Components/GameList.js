@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, Skeleton, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -15,6 +15,7 @@ const GameList = () => {
 
     const [user, loading, error] = useAuthState(auth)
     const [gettingInfo, setGettingInfo] = useState(true)
+    const [gameRender, setGameRender] = useState(false)
     const [gameList, setGameList] = useState([])
     const navigate = useNavigate()
     let roomJoined = false
@@ -22,19 +23,24 @@ const GameList = () => {
     useEffect(() => {
         socket.emit('listRoomJoin')
         socket.on('listRoomJoined', function(message){
-            console.log(message)
             getInfo()})
-        socket.on('lobbyListUpdate', function(){getInfo()})
+        socket.on('lobbyListUpdate', function(){
+            if(gameRender) {
+                setGameRender(false)
+            } else {
+                setGameRender(true)
+            }
+            getInfo()})
         console.log(user)
 
-    }, [gettingInfo])
+    }, [gameRender])
 
     
 
     
 
     const getInfo = async () => {
-        
+        setGettingInfo(true)
         const result = await fetch(`${SERVER_PATH}/game/findall`)
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
@@ -42,8 +48,9 @@ const GameList = () => {
                 ...gameList,
                 list: sanitizedResult.gameList})
             makeListElements(sanitizedResult.gameList)
-            setGettingInfo(true)
+            
         }
+        setGettingInfo(false)
     }
 
     const joinGame = async (gameId) => {
@@ -61,7 +68,7 @@ const GameList = () => {
 
     const makeListElements = (list) => {
         const listElements = list.map(game => {
-            return (<Card sx={{margin: '5%', background: mainTheme.palette.primary.light, padding: '2%'}} key={`id-${game._id}`}>
+            return (<Card sx={{margin: '2%', padding: '2%'}} key={`id-${game._id}`}>
                 <CardContent>
                 <Typography variant="h5">{game.name}</Typography>
                 <Typography variant="body2">Current Players: {game.currentPlayers}</Typography> 
@@ -85,7 +92,8 @@ const GameList = () => {
         <Box sx={{display: 'flex'}}>
             <NavLink style={{textDecoration: 'none'}} to='/newGame'><Button sx={{margin: '10px'}} variant="contained"> Make New Game</Button></NavLink>
 
-            {gameList.elements}
+            {gettingInfo ? <Skeleton width='100%' height='auto' variant="rounded"></Skeleton> :<Box sx={{display: 'flex', flexWrap: 'wrap'}}>{gameList.elements}</Box>}
+            
 
         </Box>
     )
