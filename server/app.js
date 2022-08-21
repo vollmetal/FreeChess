@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const http = require('http');
+const http = require('https');
 const server = http.createServer(app);
 global.mongoose = require('mongoose')
 global.bcrypt = require('bcryptjs')
