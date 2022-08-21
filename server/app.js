@@ -38,6 +38,6 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS
       console.log('Successfully connected to MongoDB Database')
     }
   })
-app.listen(PORT, () => {
+  io.listen(PORT, () => {
     console.log(`server listening on port ${PORT}!`)
 })

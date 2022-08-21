@@ -21,9 +21,11 @@ import ThemeBase from './Components/ThemeBase';
 import { SERVER_PATH, SERVER_PORT, SOCKET_PORT } from './constants';
 
 
-export const socket = io(`${SERVER_PATH}${SERVER_PORT}`);
+export const socket = io(`https://freechess.herokuapp.com`);
 socket.connect()
-
+socket.on('connect', () => {
+  console.log('connected')
+})
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

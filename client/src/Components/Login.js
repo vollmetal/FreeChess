@@ -17,7 +17,6 @@ const Login = (props) => {
 
         }
         if(user) {
-            console.log(user)
         }
     }, [user, loading])
 

@@ -52,7 +52,6 @@ const Header = () => {
         if (user && userState.username === '') {
             loginUser()
         }
-        console.log(theme)
     }, [user])
 
     const newPage = async () => {
