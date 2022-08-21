@@ -7,7 +7,7 @@ export const blackPieceImgPath = 'black'
 
 export const SERVER_PATH = 'https://freechess.herokuapp.com'
 
-export const SERVER_PORT = ':4200'
+export const SERVER_PORT = ':56900'
 
 export const SOCKET_PORT = ':4201'
 
