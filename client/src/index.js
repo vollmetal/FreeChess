@@ -18,7 +18,7 @@ import { io } from "socket.io-client";
 import { CssBaseline } from '@mui/material';
 import ProfilePage from './Components/Profile/ProfilePage';
 import ThemeBase from './Components/ThemeBase';
-import { SERVER_PATH, SOCKET_PORT } from './constants';
+import { SERVER_PATH, SERVER_PORT, SOCKET_PORT } from './constants';
 
 
 export const socket = io(`${SERVER_PATH}${SOCKET_PORT}`);
