@@ -5,7 +5,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from 'react-router-dom'
 import { socket } from "..";
-import { SERVER_PATH } from "../constants";
+import { SERVER_PATH, SERVER_PORT } from "../constants";
 import { auth, logout } from "../Functions/firestore";
 import { clearGame } from "../store/gameReducer";
 import { login, logoutUser } from "../store/userReducer";
@@ -23,21 +23,24 @@ const Header = () => {
     const dispatch = useDispatch()
 
     socket.on('connect', (arg) => {
+        
 
     })
 
     const loginUser = async () => {
-        const result = await fetch(`${SERVER_PATH}/user/getuser/${user.uid}`)
+        const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/user/getuser/${user.uid}`)
         const userData = await result.json()
-        if(userData.success) {
+        
+        if (userData.success) {
+            socket.emit('login', user.uid)
             console.log(userData.message)
             console.log(userData.data.player1Pieces)
-            dispatch(login({email: user.email, displayName: user.displayName, photoURL: user.photoURL, playerPiece: [userData.data.player1Pieces, userData.data.player2Pieces], uiColors: userData.data.themeColors, boardColors: userData.data.boardColors}))
+            dispatch(login({ email: user.email, displayName: user.displayName, photoURL: user.photoURL, playerPiece: [userData.data.player1Pieces, userData.data.player2Pieces], uiColors: userData.data.themeColors, boardColors: userData.data.boardColors }))
 
         } else {
             console.log(userData.message)
         }
-        
+
     }
 
     const logoutClient = async () => {
@@ -46,7 +49,7 @@ const Header = () => {
     }
 
     useEffect(() => {
-        if(user && userState.username === '') {
+        if (user && userState.username === '') {
             loginUser()
         }
         console.log(theme)
@@ -65,19 +68,18 @@ const Header = () => {
 
     return (
 
-        <Paper sx={{ display: 'flex', justifyContent: 'space-between', mb: '20px', padding: '40px', borderRadius: '5px' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }} >
-                <Typography variant="h4">FreeChess</Typography>
-                <Box>
-                    <NavLink style={{textDecoration: 'none'}} to='/'><Button onClick={newPage} sx={{ margin: '10px' }} variant="contained" >Main Page</Button></NavLink>
-                    <NavLink style={{textDecoration: 'none'}} to='/game'><Button onClick={newPage} sx={{ margin: '10px' }} variant="contained" >Game</Button></NavLink>
-                </Box>
-            </Box>
+        <Paper sx={{ display: 'flex', justifyContent: 'space-between', mb: '20px', padding: '40px', borderRadius: '5px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <NavLink onClick={newPage} style={{ textDecoration: 'none' }} to='/game'><Box sx={{ display: 'flex', alignItems: 'center'}} >
+                <Box sx={{ maxHeight: '64px', maxWidth: '64px' }}
+                    component="img"
+                    alt="placeholder"
+                    src={`${process.env.PUBLIC_URL}/imgs/Icon.png`} />
+            </Box></NavLink>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                {user && user.photoURL ? <NavLink onClick={newPage} style={{textDecoration: 'none'}} to='/userpage'><Avatar sx={{height: 'auto', width: 'auto'}} src={user.photoURL} /></NavLink> : user && user.displayName ? <Avatar>{user.displayName[0]}</Avatar> : null}
-                {!user ? <NavLink style={{textDecoration: 'none'}} to='/login'><Button onClick={newPage} variant="contained" >Login</Button> </NavLink> : <Button sx={{marginTop: '20px'}} color="warning" onClick={logoutClient} variant="contained" >Logout</Button>}
-                {!user ? <NavLink style={{textDecoration: 'none'}} to='/registration'><Button onClick={newPage} variant="contained" >Register</Button> </NavLink> : null}
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                {user && user.photoURL ? <NavLink onClick={newPage} style={{ textDecoration: 'none' }} to='/userpage'><Avatar sx={{ margin: '20px', maxWidth: '64px' }} src={user.photoURL} /></NavLink> : user && user.displayName ? <Avatar>{user.displayName[0]}</Avatar> : null}
+                {!user ? <NavLink style={{ textDecoration: 'none' }} to='/login'><Button sx={{ margin: '20px' }} onClick={newPage} variant="contained" >Login</Button> </NavLink> : <Button sx={{ margin: '20px' }} color="warning" onClick={logoutClient} variant="contained" >Logout</Button>}
+                {!user ? <NavLink style={{ textDecoration: 'none' }} to='/registration'><Button sx={{ margin: '20px' }} onClick={newPage} variant="contained" >Register</Button> </NavLink> : null}
             </Box>
 
         </Paper>

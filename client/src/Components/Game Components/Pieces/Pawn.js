@@ -1,5 +1,5 @@
-import { Box, Button } from "@mui/material"
-import { useEffect, useState } from "react"
+import { Box } from "@mui/material"
+import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { imagePath, piecePath } from "../../../constants"
 import MovePrediction from "../../../Game Functions/MovePrediction"
@@ -12,9 +12,6 @@ const Pawn = (props) => {
 
     const gameState = useSelector(state => state.game)
     const userState = useSelector(state => state.user)
-
-    const [movePredictions, setMovePredictions] = useState({emptySpaces: [], captureSpaces: []})
-    const [pieceUpdated, setPieceUpdated] = useState(false)
 
     const dispatch = useDispatch()
 

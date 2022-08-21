@@ -15,11 +15,13 @@ import GameList from './Components/GameList';
 import Registration from './Components/Registration';
 
 import { io } from "socket.io-client";
-import { CssBaseline, ThemeProvider } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import ProfilePage from './Components/Profile/ProfilePage';
+import ThemeBase from './Components/ThemeBase';
+import { SERVER_PATH, SOCKET_PORT } from './constants';
 
 
-export const socket = io('http://localhost:4201');
+export const socket = io(`${SERVER_PATH}${SOCKET_PORT}`);
 socket.connect()
 
 
@@ -27,9 +29,11 @@ socket.connect()
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-      <BrowserRouter>
-        <CssBaseline enableColorScheme />
-        <Provider store={store}>
+
+    <BrowserRouter>
+      <CssBaseline enableColorScheme />
+      <Provider store={store}>
+        <ThemeBase >
           <PageBase>
             <Routes>
               <Route path='/' element={<MainPage />} />
@@ -41,8 +45,10 @@ root.render(
               <Route path='/userpage' element={<ProfilePage />} />
             </Routes>
           </PageBase>
-        </Provider>
-      </BrowserRouter>
+        </ThemeBase>
+      </Provider>
+    </BrowserRouter>
+
   </React.StrictMode>
 );
 

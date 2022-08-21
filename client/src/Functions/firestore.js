@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, updateProfile} from "firebase/auth"; 
 import { getFirestore, query, getDocs, collection, where, addDoc} from "firebase/firestore";
-import { SERVER_PATH } from "../constants";
+import { SERVER_PATH, SERVER_PORT } from "../constants";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -31,12 +31,12 @@ const signInWithGoogle = async () => {
     const q = query(collection(db, "users"), where("uid", "==", user.uid));
     
     const docs = await getDocs(q);
-    const result = await fetch(`${SERVER_PATH}/user/getuser/${user.uid}`)
+    const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/user/getuser/${user.uid}`)
         const userData = await result.json()
         if(userData.success && userData.data) {
           console.log(userData.data)
         } else {
-            const result = await fetch(`${SERVER_PATH}/user/register`, {
+            const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/user/register`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'
@@ -78,11 +78,11 @@ const logInWithEmailAndPassword = async (email, password) => {
         displayName: name
       })
       
-      const result = await fetch(`${SERVER_PATH}/user/getuser/${user.uid}`)
+      const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/user/getuser/${user.uid}`)
         const userData = await result.json()
         if(userData.success && userData.data) {
         } else {
-            const result = await fetch(`${SERVER_PATH}/user/register`, {
+            const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/user/register`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'

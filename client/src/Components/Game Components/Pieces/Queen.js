@@ -1,5 +1,5 @@
-import { Box, Button } from "@mui/material"
-import { useEffect, useState } from "react"
+import { Box } from "@mui/material"
+import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { imagePath, piecePath } from "../../../constants"
 import MovePrediction from "../../../Game Functions/MovePrediction"
@@ -13,9 +13,6 @@ const Queen = (props) => {
     const gameState = useSelector(state => state.game)
     const userState = useSelector(state => state.user)
     const dispatch = useDispatch()
-
-    const [movePredictions, setMovePredictions] = useState({emptySpaces: [], captureSpaces: []})
-    const [pieceUpdated, setPieceUpdated] = useState(false)
 
     useEffect (() => {
             let downRightArray = MovePrediction({x: gameState.gameBoard[props.id].position.x + 1, y: gameState.gameBoard[props.id].position.y + 1}, {x: 8, y: 8}, gameState.gameBoard, props.player, 1, 'diagonal', 1)

@@ -3,9 +3,9 @@ import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "..";
-import { GridSetup, SERVER_PATH } from "../constants";
+import { GridSetup, SERVER_PATH, SERVER_PORT } from "../constants";
 import { auth } from "../Functions/firestore";
 import { clearGame, setClientPlayer, setNewGame } from "../store/gameReducer";
 import GamePage from "./Game Components/GamePage";
@@ -16,11 +16,13 @@ import GamePage from "./Game Components/GamePage";
 const GameLobby = () => {
     const [isPlayer, setIsPlayer] = useState(false)
     const [isLoading, setLoading] = useState(false)
+    const gameState = useSelector(state => state.game)
     const [gameInfo, setGameInfo] = useState({})
     const [user, loading, error] = useAuthState(auth)
 
     const { gameId } = useParams()
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     
     socket.on('updateRoom', () => {
@@ -63,7 +65,7 @@ const GameLobby = () => {
     
 
     const fetchGameInfo = async () => {
-        const results = await fetch(`${SERVER_PATH}/game/loadGame/${gameId}`)
+        const results = await fetch(`${SERVER_PATH}${SERVER_PORT}/game/loadGame/${gameId}`)
         const sanitizedResults = await results.json()
         if(sanitizedResults.success) {
             let players = []
@@ -94,7 +96,7 @@ const GameLobby = () => {
             side: player
         }
 
-        const result = await fetch(`${SERVER_PATH}/game/lobby/joinSide/${gameId}`, {
+        const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/game/lobby/joinSide/${gameId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -121,13 +123,26 @@ const GameLobby = () => {
 
     }, [user, isLoading])
 
+    const leavePage = () => {
+        const data = { roomId: gameState.id, gameId: gameState.id, playerSide: gameState.clientPlayer }
+        if (gameState.gameId != '' && gameState.clientPlayer > 0) {
+            socket.emit('leaveRooms', data)
+        } else {
+            socket.emit('leaveRooms', { roomId: gameState.gameId })
+        }
+        dispatch((clearGame()))
+        navigate('/game')
+    }
+
     return (
         <Box sx={{padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%'}}>
+            <Button sx={{}} onClick={leavePage} variant='contained'>Return to game list</Button>
+
             <Card sx={{margin: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 {!user ? <Typography>Please log in to join the game</Typography>: <Box>
-                {isPlayer ? <Box />:
+                {isPlayer ? <Box>{ gameInfo.clientPlayer === gameInfo.playerTurn ? <Typography >It is your turn!</Typography>: <Typography >It is the other players turn!</Typography> } </Box>:
                   <Box sx={{width: '100%', display: 'flex'}}>
-                    {gameInfo.clientPlayer === gameInfo.playerTurn ? <Typography >It is your turn!</Typography>: null}
+                    
                     {gameInfo.players ? <Button sx={{margin: '20px'}} disabled={(gameInfo.players[1].uid !== '')} onClick={()=> {joinAsPlayer(1)}} variant="contained">Join as Player 1</Button>: <Skeleton></Skeleton>}
                     {gameInfo.players ? <Button sx={{margin: '20px'}} disabled={(gameInfo.players[2].uid !== '')} onClick={()=> {joinAsPlayer(2)}} variant="contained">Join as Player 2</Button>: <Skeleton></Skeleton>}
                     </Box>}</Box>}
