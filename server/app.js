@@ -6,7 +6,11 @@ const server = http.createServer(app);
 global.mongoose = require('mongoose')
 global.bcrypt = require('bcryptjs')
 const { Server } = require("socket.io");
-global.io = require('socket.io').listen(server)
+global.io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+});
 
 global.socketInfo = {}
 
