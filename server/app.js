@@ -14,8 +14,8 @@ global.io = new Server(server, {
 
 global.socketInfo = {}
 
-io.use(express.json())
-io.use(cors())
+server.use(express.json())
+server.use(cors())
 
 require('dotenv').config()
 
@@ -38,6 +38,6 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS
       console.log('Successfully connected to MongoDB Database')
     }
   })
-  io.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`server listening on port ${PORT}!`)
 })
