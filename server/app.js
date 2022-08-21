@@ -14,6 +14,11 @@ global.io = new Server(server, {
 
 global.socketInfo = {}
 
+
+server.listen(PORT, () => {
+  console.log(`server listening on port ${PORT}!`)
+})
+
 app.use(express.json())
 app.use(cors())
 
@@ -38,6 +43,4 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS
       console.log('Successfully connected to MongoDB Database')
     }
   })
-  server.listen(PORT, () => {
-    console.log(`server listening on port ${PORT}!`)
-})
+  
