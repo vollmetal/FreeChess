@@ -7,9 +7,9 @@ export const blackPieceImgPath = 'black'
 
 export const SERVER_PATH = 'https://freechess.herokuapp.com'
 
-export const SERVER_PORT = ':56900'
+export const SERVER_PORT = ':15996'
 
-export const SOCKET_PORT = ':4201'
+export const SOCKET_PORT = ':15996'
 
 export const GridSetup = (x, y) => {
     let outputGrid = []
