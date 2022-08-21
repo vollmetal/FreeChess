@@ -44,4 +44,5 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS
 
 app.listen(PORT, () => {
     console.log('server start!')
+    console.log(PORT)
 })
