@@ -32,13 +32,12 @@ userRouter.post('/register', (req, res) => {
 userRouter.post('/update/:userId', async (req, res) => {
     const changedValues = req.body
     try {
-        console.log(req.params.userId)
         const user = await Connection.findOne({userId: req.params.userId})
-        console.log(user)
         const result = await user.updateOne({
             player1Pieces: changedValues.pieces[0],
             player2Pieces: changedValues.pieces[1],
-            boardColors: changedValues.boardColors
+            boardColors: changedValues.boardColors,
+            themeColors: changedValues.theme
         })
         res.json({success: true, message: 'user updated!', data: result})
     } catch {
@@ -48,9 +47,7 @@ userRouter.post('/update/:userId', async (req, res) => {
 
 userRouter.get('/getuser/:userId', async (req, res) => {
     try {
-        console.log(req.params.userId)
         const user = await Connection.findOne({userId: req.params.userId})
-        console.log(user)
         res.json({success: true, message: 'user found!', data: user})
     } catch {
         res.json({success:false , message: 'cannot find user!'})

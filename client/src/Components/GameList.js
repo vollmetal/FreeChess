@@ -1,10 +1,10 @@
-import { Button, Card, CardActions, CardContent, Skeleton, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, Paper, Skeleton, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { NavLink, useNavigate } from "react-router-dom";
 import { socket } from "..";
-import { SERVER_PATH } from "../constants";
+import { SERVER_PATH, SERVER_PORT } from "../constants";
 import { auth } from "../Functions/firestore";
 import { mainTheme } from "../Themes";
 
@@ -41,7 +41,7 @@ const GameList = () => {
 
     const getInfo = async () => {
         setGettingInfo(true)
-        const result = await fetch(`${SERVER_PATH}/game/findall`)
+        const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/game/findall`)
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
             setGameList({
@@ -54,7 +54,7 @@ const GameList = () => {
     }
 
     const joinGame = async (gameId) => {
-        const result = await fetch(`${SERVER_PATH}/game/join/${gameId}`)
+        const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/game/join/${gameId}`)
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
             
@@ -89,13 +89,14 @@ const GameList = () => {
 
 
     return (
-        <Box sx={{display: 'flex'}}>
-            <NavLink style={{textDecoration: 'none'}} to='/newGame'><Button sx={{margin: '10px'}} variant="contained"> Make New Game</Button></NavLink>
+        <Paper sx={{display: 'flex', flexDirection: 'column'}}>
+            {!user ? <Typography variant="body1">Welcome to Free Chess! Here you can join a game lobby to watch a game.</Typography>: <Typography variant="body1">Welcome to Free Chess {user.displayName}! Here you can join a game lobby to watch a game.</Typography>}
+            {user ? <NavLink style={{textDecoration: 'none'}} to='/newGame'><Button sx={{margin: '10px'}} variant="contained"> Make New Game</Button></NavLink>: null}
 
             {gettingInfo ? <Skeleton width='100%' height='auto' variant="rounded"></Skeleton> :<Box sx={{display: 'flex', flexWrap: 'wrap'}}>{gameList.elements}</Box>}
             
 
-        </Box>
+        </Paper>
     )
 }
 

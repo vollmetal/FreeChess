@@ -12,28 +12,22 @@ io.on('connection', async (socket) => {
     console.log('connected!')
     
     socket.on('joinRoom', (args) => {
-        console.log(args)
         socket.leave('listRoom')
         socket.join(`room - ${args.roomId}`)
         console.log(socket.rooms)
     })
-    socket.on("disconnecting", () => {
-        console.log(socket); // the Set contains at least the socket ID
-        console.log('disconnecting')
+
+    socket.on('login', (uid) => {
+        const user = Connection.findOne({userId: uid})
         
+    })
+
+    socket.on("disconnecting", () => {
+            
+            console.log('disconnecting')
       });
     
-      socket.on("disconnect", () => {
-        if(socket.rooms.length > 1) {
-            for (let index = 0; index < socket.rooms.length; index++) {
-                const element = socket.rooms[index];
-                if(element.contains('room - ')) {
-                    io.to(element).emit('userDisconnected')
-                }
-            }
-        }
-        socket.rooms.size === 0
-      });
+      
 
     socket.on('listRoomJoin', (args) => {
         console.log('joined the room showing list of lobbies!')

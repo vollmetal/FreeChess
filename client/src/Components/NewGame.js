@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { socket } from "..";
-import { GridSetup, makeNewGamePieces, SERVER_PATH } from "../constants";
+import { GridSetup, SERVER_PATH, SERVER_PORT } from "../constants";
 import { auth } from "../Functions/firestore";
 
 
@@ -38,7 +38,7 @@ const NewGame = () => {
     }
 
     const createGame = async () => {
-        const result = await fetch(`${SERVER_PATH}/game/new`, {
+        const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/game/new`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -55,7 +55,7 @@ const NewGame = () => {
     }
 
     return (
-            <Card sx={{display: 'flex', flexDirection: 'column',  padding: '20px' }}>
+            <Card sx={{display: 'flex', flexDirection: 'column',  padding: '20px', margin: '4%' }}>
                 <Typography textAlign='center' variant='h4'>Make a New Game</Typography>
                 <TextField
                         margin="normal"

@@ -30,7 +30,12 @@ const Login = (props) => {
 
     const loginEmail = async () => {
       await logInWithEmailAndPassword(loginCredentials.email, loginCredentials.password)
-      navigate('/')
+      navigate('/game')
+    }
+
+    const googleSignIn = async () => {
+      await signInWithGoogle()
+      navigate('/game')
     }
 
     return (
@@ -83,7 +88,7 @@ const Login = (props) => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={signInWithGoogle}
+              onClick={googleSignIn}
             >
               Sign In With Google
             </Button>

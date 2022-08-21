@@ -1,4 +1,5 @@
-import { getSquareIndexFromCoords } from "../boardManagement";
+import { getSquareIndexFromCoords } from "./boardManagement"
+
 
 
 

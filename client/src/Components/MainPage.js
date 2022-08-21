@@ -1,4 +1,4 @@
-import { Box } from "@mui/material"
+import { Box, Card, Typography } from "@mui/material"
 
 
 
@@ -6,9 +6,15 @@ import { Box } from "@mui/material"
 const MainPage = () => {
 
     return (
-        <Box>
-            <label>This is the main page</label>
-        </Box>
+        <Card display='flex' sx={{flexDirection: 'column', margin: '30px', height: '100%'}}>
+            <Typography>
+                Welcome to teh Free Chess app!
+            </Typography>
+
+            <Typography>
+                Click on the Games button to see and join game lobbies or make your own game if you're logged in!
+            </Typography>
+        </Card>
         
     )
 }

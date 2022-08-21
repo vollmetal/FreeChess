@@ -1,7 +1,8 @@
 import Header from "./Header";
-import { Box, ThemeProvider } from "@mui/material"
+import { Box, ThemeProvider, useTheme } from "@mui/material"
 import { useSelector } from "react-redux";
 import { themeMap } from "../Themes";
+import Footer from "./Footer";
 
 
 
@@ -10,16 +11,16 @@ import { themeMap } from "../Themes";
 function PageBase(props) {
 
     const userState = useSelector(state => state.user)
+    const theme = useTheme()
     
 
     return (
 
         
-            <Box>
-                <ThemeProvider theme={themeMap[userState.uiColors]}>
+            <Box sx={{minHeight: '100vh', backgroundColor: theme.palette.background.default}} >
                 <Header />
                 {props.children}
-                </ThemeProvider>
+                <Footer />
             </Box>
 
     );
