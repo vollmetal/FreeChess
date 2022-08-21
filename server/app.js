@@ -6,11 +6,7 @@ const server = http.createServer(app);
 global.mongoose = require('mongoose')
 global.bcrypt = require('bcryptjs')
 const { Server } = require("socket.io");
-global.io = new Server(server, {
-  cors: {
-    origin: "*"
-  }
-});
+global.io = require('socket.io').listen(server)
 
 global.socketInfo = {}
 
@@ -41,9 +37,6 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS
 
 
 
-server.listen(8080);
-
-app.listen(PORT, () => {
-  console.log('server start!')
-  console.log(process.env.PORT)
+server.listen(PORT, () => {
+  console.log(`server is listening at ${PORT}`)
 })
