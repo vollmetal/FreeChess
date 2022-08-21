@@ -14,18 +14,18 @@ global.io = new Server(server, {
 
 global.socketInfo = {}
 
-server.use(express.json())
-server.use(cors())
+app.use(express.json())
+app.use(cors())
 
 require('dotenv').config()
 
 const PORT = process.env.PORT || 8080
 
 const userRoutes = require('./routes/userRoutes')
-io.use('/user', userRoutes)
+app.use('/user', userRoutes)
 
 const gameRoutes = require('./routes/gameRoutes')
-io.use('/game', gameRoutes)
+app.use('/game', gameRoutes)
 
 
 mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.w1ytim4.mongodb.net/?retryWrites=true&w=majority`, {
