@@ -8,13 +8,13 @@ import { SERVER_PATH, SERVER_PORT } from "../constants";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyB5Z7PLqXZebLZdPiylAI2slu9zGnbIN3g",
-    authDomain: "free-chess-7bcb9.firebaseapp.com",
-    projectId: "free-chess-7bcb9",
-    storageBucket: "free-chess-7bcb9.appspot.com",
-    messagingSenderId: "739820690906",
-    appId: "1:739820690906:web:b825a7c075a3b9f270f4e3",
-    measurementId: "G-6BS943EP7Z"
+    apiKey: process.env.REACT_APP_F_API_KEY,
+    authDomain: process.env.REACT_APP_F_A_DOMAIN,
+    projectId: process.env.REACT_APP_F_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_F_S_BUCKET,
+    messagingSenderId: process.env.REACT_APP_F_SENDER_ID,
+    appId: process.env.REACT_APP_F_APP_ID,
+    measurementId: process.env.REACT_APP_F_M_ID
   };
 
 // Initialize Firebase

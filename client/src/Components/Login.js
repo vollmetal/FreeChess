@@ -29,12 +29,12 @@ const Login = (props) => {
 
   const loginEmail = async () => {
     await logInWithEmailAndPassword(loginCredentials.email, loginCredentials.password)
-    navigate('/game')
+    navigate('/')
   }
 
   const googleSignIn = async () => {
     await signInWithGoogle()
-    navigate('/game')
+    navigate('/')
   }
 
   return (

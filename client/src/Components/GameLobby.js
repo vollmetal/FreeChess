@@ -131,7 +131,7 @@ const GameLobby = () => {
             socket.emit('leaveRooms', { roomId: gameState.gameId })
         }
         dispatch((clearGame()))
-        navigate('/game')
+        navigate('/')
     }
 
     return (
