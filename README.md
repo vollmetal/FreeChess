@@ -38,6 +38,14 @@ The top of the game board will tell who's playing as which side and who's turn i
 
 Currently there isn't check and checkmate states nor are there more complex rules in the game yet, but I am working on implementing them.
 
+## Examples
+
+Some examples of the dark theme and different piece and board colors
+
+![Screenshot (932)](https://user-images.githubusercontent.com/102641956/185985429-e8416666-4b2a-469d-9b56-2756750ebcd0.png)
+![Screenshot (928)](https://user-images.githubusercontent.com/102641956/185985430-d6b1f59f-3612-498c-8ff4-7c2070a3a222.png)
+
+
 ## Libraries and tools used
 
 ### Front-End
