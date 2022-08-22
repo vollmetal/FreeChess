@@ -5,6 +5,8 @@
 FreeChess is a chess game app I made to learn more about React and Redux work and explore different solutions to real-time page/client updates and client-server communication. 
 It allows you to play chess games against other people and to watch other people play chess games.
 
+[Live Site](https://freechess.surge.sh)
+
 ## Functionality
 
 When you arrive at the site you are greeted with a page with a welcome message and a list of games
