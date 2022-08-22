@@ -15,34 +15,34 @@ const Rook = (props) => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-            let rightArray = MovePrediction({x: gameState.gameBoard[props.id].position.x + 1, y: gameState.gameBoard[props.id].position.y}, {x: 8, y: gameState.gameBoard[props.id].position.y}, gameState.gameBoard, props.player)
-        let leftArray = MovePrediction({x: gameState.gameBoard[props.id].position.x - 1, y: gameState.gameBoard[props.id].position.y}, {x: 0, y: gameState.gameBoard[props.id].position.y}, gameState.gameBoard, props.player, -1)
-        let upArray = MovePrediction({x: gameState.gameBoard[props.id].position.x , y: gameState.gameBoard[props.id].position.y + 1}, {x: gameState.gameBoard[props.id].position.x, y: 8}, gameState.gameBoard, props.player)
-        let downArray = MovePrediction({x: gameState.gameBoard[props.id].position.x , y: gameState.gameBoard[props.id].position.y - 1}, {x: gameState.gameBoard[props.id].position.x, y: 0}, gameState.gameBoard, props.player, -1)
+        let rightArray = MovePrediction({ x: gameState.gameBoard[props.id].position.x + 1, y: gameState.gameBoard[props.id].position.y }, { x: 8, y: gameState.gameBoard[props.id].position.y }, gameState.gameBoard, props.player)
+        let leftArray = MovePrediction({ x: gameState.gameBoard[props.id].position.x - 1, y: gameState.gameBoard[props.id].position.y }, { x: 0, y: gameState.gameBoard[props.id].position.y }, gameState.gameBoard, props.player, -1)
+        let upArray = MovePrediction({ x: gameState.gameBoard[props.id].position.x, y: gameState.gameBoard[props.id].position.y + 1 }, { x: gameState.gameBoard[props.id].position.x, y: 8 }, gameState.gameBoard, props.player)
+        let downArray = MovePrediction({ x: gameState.gameBoard[props.id].position.x, y: gameState.gameBoard[props.id].position.y - 1 }, { x: gameState.gameBoard[props.id].position.x, y: 0 }, gameState.gameBoard, props.player, -1)
         let moveArray = rightArray.spaceArray.concat(leftArray.spaceArray, upArray.spaceArray, downArray.spaceArray)
-        if(moveArray.length > 0) {
+        if (moveArray.length > 0) {
             moveArray.map(position => {
-                    
-                if(gameState.gameBoard[position.index].piece === 'King' && gameState.gameBoard[position.index].player != props.player && gameState.gameBoard[position.index].player === gameState.clientPlayer) {
+
+                if (gameState.gameBoard[position.index].piece === 'King' && gameState.gameBoard[position.index].player != props.player && gameState.gameBoard[position.index].player === gameState.clientPlayer) {
                     console.log(gameState.gameBoard[position.index])
                     console.log(`Piece ${props.id} can capture their king!`)
                 }
             })
-            if( gameState.clientPlayer === props.player) {
-                dispatch(pieceUpdate({id: props.id, move: 'selectPiece', moves: moveArray}))
+            if (gameState.clientPlayer === props.player) {
+                dispatch(pieceUpdate({ id: props.id, move: 'selectPiece', moves: moveArray }))
             } else {
             }
-            
+
         }
-        
-        
+
+
     }, [gameState.render])
 
-    return (<Box sx={{height: '100%', width: '100%'}}
-      component="img"
-       alt="placeholder"
-       src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${userState.playerPiece[props.player -1]}/Rook.png`}/>
-   )
+    return (<Box sx={{ height: '100%', width: '100%' }}
+        component="img"
+        alt="placeholder"
+        src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${userState.playerPiece[props.player - 1]}/Rook.png`} />
+    )
 }
 
 export default Rook

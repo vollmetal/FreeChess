@@ -10,7 +10,7 @@ gameRouter.get('/', (req, res) => {
 
 io.on('connection', async (socket) => {
     console.log('connected!')
-    
+
     socket.on('joinRoom', (args) => {
         socket.leave('listRoom')
         socket.join(`room - ${args.roomId}`)
@@ -18,16 +18,16 @@ io.on('connection', async (socket) => {
     })
 
     socket.on('login', (uid) => {
-        const user = Connection.findOne({userId: uid})
-        
+        const user = Connection.findOne({ userId: uid })
+
     })
 
     socket.on("disconnecting", () => {
-            
-            console.log('disconnecting')
-      });
-    
-      
+
+        console.log('disconnecting')
+    });
+
+
 
     socket.on('listRoomJoin', (args) => {
         console.log('joined the room showing list of lobbies!')
@@ -36,18 +36,18 @@ io.on('connection', async (socket) => {
     })
     socket.on('leaveRooms', async (args) => {
         socket.leave('listRoom')
-        if(args) {
-            
-            if(args.gameId) {
+        if (args) {
+
+            if (args.gameId) {
                 io.to(`room - ${args.gameId}`).emit('userLeft')
                 socket.leave(`room - ${args.gameId}`)
                 const game = await Game.findById(args.gameId)
-                if(args.playerSide) {
+                if (args.playerSide) {
                     let players = ''
                     let currentPlayers = game.currentPlayers
                     switch (args.playerSide) {
                         case 1:
-                           players = {
+                            players = {
                                 1: {
                                     uid: '',
                                     name: '',
@@ -59,41 +59,41 @@ io.on('connection', async (socket) => {
                                     score: game.players[2].score
                                 }
                             }
-                            currentPlayers = game.currentPlayers--                            
+                            currentPlayers = game.currentPlayers - 1
                             break;
 
-                            case 2:
-                                players = {
-                                    1: {
-                                        uid: game.players[1].uid,
-                                        name: game.players[1].name,
-                                        score: game.players[1].score
-                                    },
-                                    2: {
-                                        uid: '',
-                                        name: '',
-                                        score: game.players[2].score
-                                    }
+                        case 2:
+                            players = {
+                                1: {
+                                    uid: game.players[1].uid,
+                                    name: game.players[1].name,
+                                    score: game.players[1].score
+                                },
+                                2: {
+                                    uid: '',
+                                    name: '',
+                                    score: game.players[2].score
                                 }
-                                currentPlayers = game.currentPlayers--
-                                break;                    
+                            }
+                            currentPlayers = game.currentPlayers - 1
+                            break;
                         default:
                             break;
                     }
-                    
+
                     const updateGame = await game.updateOne({
                         players: players,
                         currentPlayers: currentPlayers
                     })
-                    
+
                 }
             }
-            
+
 
         }
-        
+
     })
-    
+
 })
 
 gameRouter.post('/new', async (req, res) => {
@@ -113,7 +113,7 @@ gameRouter.post('/new', async (req, res) => {
                 res.json({ success: false, message: error, currentData: gameInfo })
             } else {
                 io.to(`listRoom`).emit('lobbyListUpdate')
-                res.json({ success: true, game: newGame, message: `Game ${gameInfo.gameName} successfully made!`,  currentData: gameInfo})
+                res.json({ success: true, game: newGame, message: `Game ${gameInfo.gameName} successfully made!`, currentData: gameInfo })
             }
         })
     } else {
@@ -138,17 +138,17 @@ gameRouter.get('/join/:gameId', async (req, res) => {
 
     try {
         const game = await Game.findById(gameId)
-            if (game.players[1].uid != '') {
-                openSides.push(false)
-            } else {
-                openSides.push(true)
-            }
-            if (game.players[2].uid != '') {
-                openSides.push(false)
-            } else {
-                openSides.push(true)
-            }
-            res.json({ success: true, message: `Welcome to ${game.name}! Please choose which side you want to be on!`, openSlots: openSides })
+        if (game.players[1].uid != '') {
+            openSides.push(false)
+        } else {
+            openSides.push(true)
+        }
+        if (game.players[2].uid != '') {
+            openSides.push(false)
+        } else {
+            openSides.push(true)
+        }
+        res.json({ success: true, message: `Welcome to ${game.name}! Please choose which side you want to be on!`, openSlots: openSides })
     } catch {
         res.json({ success: false, message: 'ERROR: failed to fetch game info!', currentData: gameId })
     }
@@ -162,8 +162,8 @@ gameRouter.post('/lobby/joinSide/:gameId', async (req, res) => {
     try {
         const game = await Game.findById(gameId)
         if (game.currentPlayers < 2) {
-            const currentPlayers = game.currentPlayers++            
-            if (playerInfo.side == 1) {                
+            const currentPlayers = game.currentPlayers + 1
+            if (playerInfo.side == 1) {
                 const updateGame = await game.updateOne({
                     players: {
                         1: {
@@ -225,20 +225,20 @@ gameRouter.post('/move/:gameId', async (req, res) => {
         const game = await Game.findById(req.params.gameId)
         try {
             console.log(game.playerTurn)
-            
+
             if (game.playerTurn == 1) {
-                
+
                 newTurn = 2
             } else {
                 newTurn = 1
             }
-            console.log(newTurn)            
+            console.log(newTurn)
             const gameUpdate = await game.updateOne({
                 gameBoard: move,
                 playerTurn: newTurn
             })
             io.to(`room - ${req.params.gameId}`).emit('updateRoom')
-            res.json({ success: true, message: 'move successfully made!', currentData: gameUpdate})
+            res.json({ success: true, message: 'move successfully made!', currentData: gameUpdate })
         } catch {
             res.json({ success: false, message: 'ERROR: failed to fetch game info 2!', currentData: req.body.move })
         }

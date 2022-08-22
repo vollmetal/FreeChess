@@ -5,7 +5,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "..";
-import { GridSetup, SERVER_PATH, SERVER_PORT } from "../constants";
+import { SERVER_PATH } from "../constants";
 import { auth } from "../Functions/firestore";
 import { clearGame, setClientPlayer, setNewGame } from "../store/gameReducer";
 import GamePage from "./Game Components/GamePage";
@@ -65,7 +65,7 @@ const GameLobby = () => {
     
 
     const fetchGameInfo = async () => {
-        const results = await fetch(`${SERVER_PATH}${SERVER_PORT}/game/loadGame/${gameId}`)
+        const results = await fetch(`${SERVER_PATH}/game/loadGame/${gameId}`)
         const sanitizedResults = await results.json()
         if(sanitizedResults.success) {
             let players = []
@@ -96,7 +96,7 @@ const GameLobby = () => {
             side: player
         }
 
-        const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/game/lobby/joinSide/${gameId}`, {
+        const result = await fetch(`${SERVER_PATH}/game/lobby/joinSide/${gameId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -104,12 +104,12 @@ const GameLobby = () => {
             body: JSON.stringify(data)})
         const sanitizedResults = await result.json()
         if(sanitizedResults.success) {
-            console.log(sanitizedResults.message)
+            
             setIsPlayer(true)
             dispatch(setClientPlayer(player))
             
         } else {
-            console.log(sanitizedResults.message)
+            
         }
     }
 

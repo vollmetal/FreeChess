@@ -3,9 +3,9 @@ import { Box } from "@mui/system"
 import { useState } from "react"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { useDispatch, useSelector } from "react-redux"
-import { imagePath, piecePath, SERVER_PATH, SERVER_PORT } from "../../constants"
+import { imagePath, piecePath, SERVER_PATH } from "../../constants"
 import { auth } from "../../Functions/firestore"
-import { login, setplayerPieces } from "../../store/userReducer"
+import { login } from "../../store/userReducer"
 
 
 
@@ -32,24 +32,21 @@ const ProfilePage = () => {
     }
 
     const saveChanges = async () => {
-        const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/user/update/${user.uid}`, {
+        const result = await fetch(`${SERVER_PATH}/user/update/${user.uid}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({pieces: [tempChanges.player1Piece, tempChanges.player2Piece], boardColors: [tempChanges.boardColors1, tempChanges.boardColors2], theme: tempChanges.theme})
+            body: JSON.stringify({ pieces: [tempChanges.player1Piece, tempChanges.player2Piece], boardColors: [tempChanges.boardColors1, tempChanges.boardColors2], theme: tempChanges.theme })
         })
         const sanitizedResult = await result.json()
-        console.log(sanitizedResult)
-        const result2 = await fetch(`${SERVER_PATH}${SERVER_PORT}/user/getuser/${user.uid}`)
+        const result2 = await fetch(`${SERVER_PATH}/user/getuser/${user.uid}`)
         const userData = await result2.json()
-        if(userData.success) {
-            console.log(userData.message)
-            console.log(userData.data.player1Pieces)
-            dispatch(login({email: user.email, displayName: user.displayName, photoURL: user.photoURL, playerPiece: [userData.data.player1Pieces, userData.data.player2Pieces], uiColors: userData.data.themeColors, boardColors: userData.data.boardColors}))
+        if (userData.success) {
+            dispatch(login({ email: user.email, displayName: user.displayName, photoURL: user.photoURL, playerPiece: [userData.data.player1Pieces, userData.data.player2Pieces], uiColors: userData.data.themeColors, boardColors: userData.data.boardColors }))
 
         } else {
-            console.log(userData.message)
+
         }
     }
 
@@ -75,7 +72,7 @@ const ProfilePage = () => {
                     <FormControlLabel name="player1Piece" value="Red" control={<Radio />} label="Red" />
                     <FormControlLabel name="player1Piece" value="Yellow" control={<Radio />} label="Yellow" />
                     <FormControlLabel name="player1Piece" value="Blue" control={<Radio />} label="Blue" />
-                    
+
                 </RadioGroup>
             </FormControl>
             <Box maxWidth='128px' sx={{ height: 'auto', padding: '20px' }}><Box sx={{ height: '100%', width: '100%' }}
@@ -137,23 +134,23 @@ const ProfilePage = () => {
                 </RadioGroup>
             </FormControl>
             <Box display='flex' flexDirection='row' justifyContent='center'>
-            <Box maxWidth='128px' sx={{ backgroundColor: tempChanges.boardColors1, aspectRatio: '1/ 1' }}>
-                <Box sx={{ height: '100%', width: '100%' }}
-                    component="img"
-                    alt="placeholder"
-                    src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${tempChanges.player2Piece}/Pawn.png`} />
+                <Box maxWidth='128px' sx={{ backgroundColor: tempChanges.boardColors1, aspectRatio: '1/ 1' }}>
+                    <Box sx={{ height: '100%', width: '100%' }}
+                        component="img"
+                        alt="placeholder"
+                        src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${tempChanges.player2Piece}/Pawn.png`} />
+                </Box>
+                <Box maxWidth='128px' sx={{ backgroundColor: tempChanges.boardColors2, aspectRatio: '1/ 1' }}>
+                    <Box sx={{ height: '100%', width: '100%' }}
+                        component="img"
+                        alt="placeholder"
+                        src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${tempChanges.player2Piece}/Pawn.png`} />
+                </Box>
             </Box>
-            <Box maxWidth='128px'sx={{ backgroundColor: tempChanges.boardColors2, aspectRatio: '1/ 1' }}>
-                <Box sx={{ height: '100%', width: '100%' }}
-                    component="img"
-                    alt="placeholder"
-                    src={`${process.env.PUBLIC_URL}/${imagePath}/${piecePath}/${tempChanges.player2Piece}/Pawn.png`} />
-            </Box>
-            </Box>
-            
+
         </Box>
         <Box margin='5%' sx={{ borderStyle: 'solid', borderTopWidth: '0px', borderBottomWidth: '4px', borderLeftWidth: '0px', borderRightWidth: '0px' }}>
-        <FormControl>
+            <FormControl>
                 <FormLabel>Theme</FormLabel>
                 <RadioGroup
                     onChange={selectBoardColors}
@@ -167,7 +164,7 @@ const ProfilePage = () => {
             </FormControl>
         </Box>
 
-        <Button sx={{width: '100%', margin: '20px'}} onClick={saveChanges} variant='contained'>Save Changes</Button>
+        <Button sx={{ width: '100%', margin: '20px' }} onClick={saveChanges} variant='contained'>Save Changes</Button>
 
     </Card>)
 }

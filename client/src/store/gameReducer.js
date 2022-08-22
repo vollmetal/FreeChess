@@ -1,7 +1,7 @@
-import { createSlice, current } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 
-export const gameReducer = createSlice ({
+export const gameReducer = createSlice({
     name: 'Game',
     initialState: {
         id: "",
@@ -27,38 +27,38 @@ export const gameReducer = createSlice ({
     },
     reducers: {
         setNewGame: (state, action) => {
-                  state.gameBoard = action.payload.gameBoard
-                  state.players = action.payload.players
-                  state.clientPlayer = action.payload.clientPlayer
-                  state.gameState = 'waiting'
-                  state.name = action.payload.name
-                  state.id = action.payload.id
-                  state.playerTurn = action.payload.turn
-                  state.render = true
+            state.gameBoard = action.payload.gameBoard
+            state.players = action.payload.players
+            state.clientPlayer = action.payload.clientPlayer
+            state.gameState = 'waiting'
+            state.name = action.payload.name
+            state.id = action.payload.id
+            state.playerTurn = action.payload.turn
+            state.render = true
         },
 
         clearGame: (state) => {
-        state.id = ""
-        state.name = "placeholder"
-        state.playerTurn = 1
-        state.clientPlayer = 0
-        state.players = {
-            1: {
-                uid: '',
-                name: '',
-                score: 0
-            },
-            2: {
-                uid: '',
-                name: '',
-                score: 0
+            state.id = ""
+            state.name = "placeholder"
+            state.playerTurn = 1
+            state.clientPlayer = 0
+            state.players = {
+                1: {
+                    uid: '',
+                    name: '',
+                    score: 0
+                },
+                2: {
+                    uid: '',
+                    name: '',
+                    score: 0
+                }
             }
-        }
-        state.gameBoard = ['this']
-        state.movePieces = []
-        state.movePiece = 0
-        state.render = true
-        state.gameState = ''
+            state.gameBoard = ['this']
+            state.movePieces = []
+            state.movePiece = 0
+            state.render = true
+            state.gameState = ''
         },
 
         finishRender: (state) => {
@@ -73,21 +73,20 @@ export const gameReducer = createSlice ({
         moveStart: (state, action) => {
             const temp = state.gameBoard[action.payload].moves
             state.gameBoard = state.gameBoard.map(piece => {
-                return {position: piece.position, color: piece.color, piece: piece.piece, player: piece.player, move: ''}
+                return { position: piece.position, color: piece.color, piece: piece.piece, player: piece.player, move: '' }
             })
             temp.forEach(element => {
-                
+
                 state.gameBoard[element.index].move = element.type
                 state.gameBoard[element.index].pieceIndex = action.payload
-                console.log(state.gameBoard[element.index].move)
             });
-            
+
             state.render = true
         },
 
         moveCancel: (state) => {
             state.gameBoard = state.gameBoard.map(piece => {
-                return {position: piece.position, color: piece.color, piece: piece.piece, player: piece.player, move: ''}
+                return { position: piece.position, color: piece.color, piece: piece.piece, player: piece.player, move: '' }
             })
             state.render = true
             state.gameState = 'clientWaiting'
@@ -101,11 +100,11 @@ export const gameReducer = createSlice ({
             state.gameBoard[action.payload.movePieceId].piece = ''
             state.gameBoard[action.payload.movePieceId].player = 0
             state.gameBoard = state.gameBoard.map(piece => {
-                return {position: piece.position, color: piece.color, piece: piece.piece, player: piece.player, move: ''}
+                return { position: piece.position, color: piece.color, piece: piece.piece, player: piece.player, move: '' }
             })
-            
+
             state.gameState = 'clientWaiting'
-            if(state.playerTurn === 1) {
+            if (state.playerTurn === 1) {
                 state.playerTurn = 2
             } else {
                 state.playerTurn = 1

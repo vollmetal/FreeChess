@@ -20,7 +20,6 @@ function PageBase(props) {
             <Box sx={{minHeight: '100vh', backgroundColor: theme.palette.background.default}} >
                 <Header />
                 {props.children}
-                <Footer />
             </Box>
 
     );

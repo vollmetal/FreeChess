@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { mainTheme } from '../Themes';
 
 
 export const userReducer = createSlice({

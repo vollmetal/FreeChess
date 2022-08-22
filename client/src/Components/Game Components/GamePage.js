@@ -1,13 +1,9 @@
 import { Button, Card, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import { useEffect, useState } from "react"
-import { useAuthState } from "react-firebase-hooks/auth"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
-import { socket } from "../.."
-import { SERVER_PATH, SERVER_PORT } from "../../constants"
-import { auth } from "../../Functions/firestore"
-import { clearGame, finishRender, moveCancel, moveFinish, moveStart } from "../../store/gameReducer"
+import { SERVER_PATH } from "../../constants"
+import { finishRender, moveFinish, moveStart } from "../../store/gameReducer"
 import Bishop from "./Pieces/Bishop"
 import King from "./Pieces/King"
 import Knight from "./Pieces/Knight"
@@ -21,16 +17,11 @@ import Rook from "./Pieces/Rook"
 
 const GamePage = (props) => {
 
-    const [user, loading, error] = useAuthState(auth)
-
     const gameState = useSelector(state => state.game)
     const userState = useSelector(state => state.user)
     const dispatch = useDispatch()
 
     const [gameBoard, setGameBoard] = useState({})
-    const [gameLoaded, setGameLoaded] = useState(false)
-
-    const navigate = useNavigate()
 
     useEffect(() => {
         if (gameState.gameBoard) {
@@ -46,7 +37,7 @@ const GamePage = (props) => {
 
     }
 
-    
+
 
     const moveSpace = async (spaceId, movePieceId, movePiece) => {
         let newGameBoard = gameState.gameBoard.map(space => { return { position: space.position, color: space.color, piece: space.piece, player: space.player, move: space.move } })
@@ -59,7 +50,7 @@ const GamePage = (props) => {
             return { position: space.position, piece: space.piece, move: '', player: space.player, color: space.color }
         })
         dispatch(moveFinish({ spaceId: spaceId, movePieceId: movePieceId, movePiece: movePiece }))
-        const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/game/move/${gameState.id}`, {
+        const result = await fetch(`${SERVER_PATH}/game/move/${gameState.id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -67,7 +58,6 @@ const GamePage = (props) => {
             body: JSON.stringify(newGameBoard)
         })
         const sanitizedResults = await result.json()
-        console.log(sanitizedResults)
     }
 
     const makeBoardElements = () => {
@@ -114,7 +104,7 @@ const GamePage = (props) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: '5px' }}>
-            
+
 
             <Card sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: '5px', marginBottom: '20px' }}>
                 <Typography sx={{ padding: '10px' }}>{gameState.name}</Typography>
@@ -122,7 +112,7 @@ const GamePage = (props) => {
                 {gameState.players[2].uid === '' ? <Typography>Player 2 is empty</Typography> : <Typography>Player 2: {gameState.players[2].name} {gameState.playerTurn === 2 ? 'Current Turn' : ''}</Typography>}
             </Card>
 
-            <Box sx={{ borderStyle: 'solid',borderWidth: '5px', borderColor: 'black', display: 'grid', gridTemplateRows: 'repeat(9, minmax(0px, 1fr))', gridTemplateColumns: 'repeat(9, minmax(0px, 1fr))', justifyItems: 'stretch', height: '100%', width: '100%' }}>
+            <Box sx={{ borderStyle: 'solid', borderWidth: '5px', borderColor: 'black', display: 'grid', gridTemplateRows: 'repeat(9, minmax(0px, 1fr))', gridTemplateColumns: 'repeat(9, minmax(0px, 1fr))', justifyItems: 'stretch', height: '100%', width: '100%' }}>
                 <Box sx={{
                     borderWidth: '2px',
                     borderStyle: 'solid',
@@ -188,8 +178,8 @@ const GamePage = (props) => {
                 }} >3</Typography></Box>
                 <Box sx={{
                     borderWidth: '2px',
-                     borderStyle: 'solid',
-                     borderColor: 'black',
+                    borderStyle: 'solid',
+                    borderColor: 'black',
                     gridColumn: 0,
                     gridRow: 4,
                     width: '100%',
@@ -301,7 +291,7 @@ const GamePage = (props) => {
                     borderStyle: 'solid',
                     borderColor: 'black',
                     gridColumn: 4,
-                     gridRow: 0,
+                    gridRow: 0,
                     width: '100%',
                     height: '100%',
                     aspectRatio: '1/ 1'

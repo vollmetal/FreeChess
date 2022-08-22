@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 
-const connectionSchema =  new mongoose.Schema({
+const connectionSchema = new mongoose.Schema({
     name: String,
     userId: String,
     socketId: String,

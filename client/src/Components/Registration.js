@@ -1,4 +1,4 @@
-import { Box, Button, Card, Container, TextField, Typography } from '@mui/material';
+import { Box, Button, Container, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +34,7 @@ const Registration = () => {
     const registerEmail = async () => {
         await registerWithEmailAndPassword(registerCredentials.username, registerCredentials.email, registerCredentials.password)
         navigate('/')
-      }
+    }
 
     return (
         <Container component="main" maxWidth="xs">

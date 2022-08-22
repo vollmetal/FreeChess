@@ -31,12 +31,11 @@ const signInWithGoogle = async () => {
     const q = query(collection(db, "users"), where("uid", "==", user.uid));
     
     const docs = await getDocs(q);
-    const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/user/getuser/${user.uid}`)
+    const result = await fetch(`${SERVER_PATH}/user/getuser/${user.uid}`)
         const userData = await result.json()
         if(userData.success && userData.data) {
-          console.log(userData.data)
         } else {
-            const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/user/register`, {
+            const result = await fetch(`${SERVER_PATH}/user/register`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'
@@ -44,7 +43,6 @@ const signInWithGoogle = async () => {
               body: JSON.stringify({name: user.displayName, userId: user.uid})
             })
         }
-    console.log(docs.docs.length)
     if (docs.docs.length === 0) {
       await addDoc(collection(db, "users"), {
         uid: user.uid,
@@ -78,11 +76,11 @@ const logInWithEmailAndPassword = async (email, password) => {
         displayName: name
       })
       
-      const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/user/getuser/${user.uid}`)
+      const result = await fetch(`${SERVER_PATH}/user/getuser/${user.uid}`)
         const userData = await result.json()
         if(userData.success && userData.data) {
         } else {
-            const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/user/register`, {
+            const result = await fetch(`${SERVER_PATH}/user/register`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'

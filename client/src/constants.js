@@ -5,7 +5,7 @@ export const piecePath = 'piece icons'
 
 export const blackPieceImgPath = 'black'
 
-export const SERVER_PATH = 'https://freechess.herokuapp.com:'
+export const SERVER_PATH = 'https://freechess.herokuapp.com'
 
 export const SERVER_PORT = '39814'
 
@@ -16,16 +16,14 @@ export const GridSetup = (x, y) => {
     let currentX = 1
     let currentY = 1
     let color = ''
-    let player = 1
-    let piece = ''
-    
+
     while (currentX < x) {
         if (color == 0) {
             color = 1
         } else {
             color = 0
         }
-        
+
         while (currentY < y) {
             let player = 1
             let piece = ''
@@ -71,7 +69,7 @@ export const GridSetup = (x, y) => {
                     }
 
                     break;
-                case y-1:
+                case y - 1:
                     switch (currentX) {
                         case 1:
                             piece = 'Rook'
@@ -114,7 +112,7 @@ export const GridSetup = (x, y) => {
                     break;
             }
 
-            outputGrid.push({ position: { x: currentX, y: currentY }, color: color, piece: piece, player: player, canMove: false, move: ''  })
+            outputGrid.push({ position: { x: currentX, y: currentY }, color: color, piece: piece, player: player, canMove: false, move: '' })
             currentY++;
         }
 

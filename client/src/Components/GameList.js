@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { NavLink, useNavigate } from "react-router-dom";
 import { socket } from "..";
-import { SERVER_PATH, SERVER_PORT } from "../constants";
+import { SERVER_PATH } from "../constants";
 import { auth } from "../Functions/firestore";
-import { mainTheme } from "../Themes";
 
 
 
@@ -18,7 +17,6 @@ const GameList = () => {
     const [gameRender, setGameRender] = useState(false)
     const [gameList, setGameList] = useState([])
     const navigate = useNavigate()
-    let roomJoined = false
 
     useEffect(() => {
         socket.emit('listRoomJoin')
@@ -31,7 +29,6 @@ const GameList = () => {
                 setGameRender(true)
             }
             getInfo()})
-        console.log(user)
 
     }, [gameRender])
 
@@ -41,7 +38,7 @@ const GameList = () => {
 
     const getInfo = async () => {
         setGettingInfo(true)
-        const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/game/findall`)
+        const result = await fetch(`${SERVER_PATH}/game/findall`)
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
             setGameList({
@@ -54,7 +51,7 @@ const GameList = () => {
     }
 
     const joinGame = async (gameId) => {
-        const result = await fetch(`${SERVER_PATH}${SERVER_PORT}/game/join/${gameId}`)
+        const result = await fetch(`${SERVER_PATH}/game/join/${gameId}`)
         const sanitizedResult = await result.json()
         if(sanitizedResult.success) {
             
@@ -62,7 +59,7 @@ const GameList = () => {
             
             navigate(`/lobby/${gameId}`)
         } else {
-            console.log(sanitizedResult.message)
+            
         }
     }
 
