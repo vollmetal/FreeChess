@@ -52,7 +52,7 @@ const ProfilePage = () => {
 
 
     return (<Card sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography margin='5%' variant="h4">Customize your preferences</Typography>
+        <Typography margin='2%' variant="h4">Customize your preferences</Typography>
         <Box margin='5%' sx={{ borderStyle: 'solid', borderTopWidth: '4px', borderBottomWidth: '4px', borderLeftWidth: '0px', borderRightWidth: '0px' }}>
             <FormControl>
                 <FormLabel>Player 1 Piece Color</FormLabel>
