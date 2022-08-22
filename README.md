@@ -52,10 +52,10 @@ Some examples of the dark theme and different piece and board colors
 
 Written in JavaScript with some CSS and HTML where needed
 
--Reactjs
--Redux/React-Redux
--Firebase
--Mui
+- Reactjs
+- Redux/React-Redux
+- Firebase
+- Mui
 
 ### Back-End
 
@@ -64,13 +64,13 @@ Written in JavaScript
 The server uses both MongoDB and Firebase for it's backend. Firebase is used to help authorize accounts while MongoDB is used to handle both game data and extra user data not present in Firebase authentication.
 Socket.io is used to allow the clients and server to communicate with each other to update pages and information in real-time.
 
--Node.js
--Socket.io
--Express
--Firebase
--MongoDB
--Mongoose
--dotenv
+- Node.js
+- Socket.io
+- Express
+- Firebase
+- MongoDB
+- Mongoose
+- dotenv
 
 # Contributors
 
