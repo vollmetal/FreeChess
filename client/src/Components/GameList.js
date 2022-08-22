@@ -90,7 +90,11 @@ const GameList = () => {
             {!user ? <Typography variant="body1">Welcome to Free Chess! Here you can join a game lobby to watch a game.</Typography>: <Typography variant="body1">Welcome to Free Chess {user.displayName}! Here you can join a game lobby to watch a game.</Typography>}
             {user ? <NavLink style={{textDecoration: 'none'}} to='/newGame'><Button sx={{margin: '10px'}} variant="contained"> Make New Game</Button></NavLink>: null}
 
-            {gettingInfo ? <Skeleton width='100%' height='auto' variant="rounded"></Skeleton> :<Box sx={{display: 'flex', flexWrap: 'wrap'}}>{gameList.elements}</Box>}
+            {gettingInfo ? <Skeleton width='100%' height='600px' variant='rectangular'>
+                <Skeleton width='128px' height='128px' variant='rectangular'>
+
+                </Skeleton>
+            </Skeleton> :<Box sx={{display: 'flex', flexWrap: 'wrap'}}>{gameList.elements}</Box>}
             
 
         </Paper>
