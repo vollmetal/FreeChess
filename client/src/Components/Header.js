@@ -1,4 +1,3 @@
-import { useTheme } from "@emotion/react";
 import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -71,9 +70,9 @@ const Header = () => {
                     alt="placeholder"
                     src={`${process.env.PUBLIC_URL}/imgs/Icon.png`} />
             </Box></NavLink>
-            <Typography variant="h4">Free Chess</Typography>
+            <Typography variant="h4">ReactChess</Typography>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
                 {user && user.photoURL ? <NavLink onClick={newPage} style={{ textDecoration: 'none' }} to='/userpage'><Avatar sx={{ margin: '20px', maxWidth: '64px' }} src={user.photoURL} /></NavLink> : user && user.displayName ? <NavLink onClick={newPage} style={{ textDecoration: 'none' }} to='/userpage'><Avatar>{user.displayName[0]}</Avatar></NavLink> : null}
                 {!user ? <NavLink style={{ textDecoration: 'none' }} to='/login'><Button sx={{ margin: '20px' }} onClick={newPage} variant="contained" >Login</Button> </NavLink> : <Button sx={{ margin: '20px' }} color="warning" onClick={logoutClient} variant="contained" >Logout</Button>}
                 {!user ? <NavLink style={{ textDecoration: 'none' }} to='/registration'><Button sx={{ margin: '20px' }} onClick={newPage} variant="contained" >Register</Button> </NavLink> : null}
