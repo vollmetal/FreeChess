@@ -94,7 +94,7 @@ const GameList = () => {
                 <Skeleton width='128px' height='128px' variant='rectangular'>
 
                 </Skeleton>
-            </Skeleton> :<Box sx={{display: 'flex', flexWrap: 'wrap'}}>{gameList.elements}</Box>}
+            </Skeleton> :<Paper sx={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center'}}>{gameList.elements}</Paper>}
             
 
         </Paper>

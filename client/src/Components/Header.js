@@ -1,5 +1,5 @@
-import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
-import { useEffect } from "react";
+import { Avatar, Box, Button, ButtonGroup, Fade, List, Paper, Popper, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from 'react-router-dom'
@@ -17,8 +17,12 @@ const Header = () => {
     const userState = useSelector(state => state.user)
     const [user, loading, error] = useAuthState(auth)
 
+    const [anchorRef, setAnchorRef] = useState(null)
+
     const dispatch = useDispatch()
     const navigate = useNavigate()
+
+    const [itemOpen, setItemOpen] = useState(false)
 
     socket.on('connect', (arg) => {
         console.log('connected!')
@@ -37,11 +41,43 @@ const Header = () => {
         }
 
     }
+    const goToPage = (page) => {
+        const data = { roomId: gameState.id, gameId: gameState.id, playerSide: gameState.clientPlayer }
+        if (gameState.gameId != '' && gameState.clientPlayer > 0) {
+            socket.emit('leaveRooms', data)
+        } else {
+            socket.emit('leaveRooms', { roomId: gameState.gameId })
+        }
+        dispatch(clearGame())
+        switch (page) {
+            case 'profile':
+                setItemOpen(false)
+                navigate('/userpage')
+                break;
+            case 'registration':
+                setItemOpen(false)
+                navigate('/registration')
+                break;
+            case 'login':
+                setItemOpen(false)
+                navigate('/login')
+                break;
+            case 'logout':
+                setItemOpen(false)
+                logout()
+                dispatch(logoutUser())
+                navigate('/')
+            case 'main':
+                navigate('/')
+                break;
+            default:
+                break;
+        }
+    }
 
-    const logoutClient = async () => {
-        logout()
-        dispatch(logoutUser())
-        navigate('/')
+    const toggleState = (e) => {
+        setItemOpen(!itemOpen)
+        setAnchorRef(e.currentTarget)
     }
 
     useEffect(() => {
@@ -50,32 +86,52 @@ const Header = () => {
         }
     }, [user])
 
-    const newPage = async () => {
-
-        const data = { roomId: gameState.id, gameId: gameState.id, playerSide: gameState.clientPlayer }
-        if (gameState.gameId != '' && gameState.clientPlayer > 0) {
-            socket.emit('leaveRooms', data)
-        } else {
-            socket.emit('leaveRooms', { roomId: gameState.gameId })
-        }
-        dispatch(clearGame())
-    }
-
     return (
 
         <Paper sx={{ display: 'flex', justifyContent: 'space-between', mb: '20px', padding: '40px', borderRadius: '5px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <NavLink onClick={newPage} style={{ textDecoration: 'none' }} to='/'><Box sx={{ display: 'flex', alignItems: 'center' }} >
-                <Box sx={{ maxHeight: '64px', maxWidth: '64px' }}
+            <Box sx={{ display: 'flex', alignItems: 'center' }} >
+                <Button onClick={() => {goToPage('main')}}><Box sx={{ maxHeight: '64px', maxWidth: '64px' }}
                     component="img"
                     alt="placeholder"
                     src={`${process.env.PUBLIC_URL}/imgs/Icon.png`} />
-            </Box></NavLink>
-            <Typography variant="h4">ReactChess</Typography>
+                </Button></Box>
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-                {user && user.photoURL ? <NavLink onClick={newPage} style={{ textDecoration: 'none' }} to='/userpage'><Avatar sx={{ margin: '20px', maxWidth: '64px' }} src={user.photoURL} /></NavLink> : user && user.displayName ? <NavLink onClick={newPage} style={{ textDecoration: 'none' }} to='/userpage'><Avatar>{user.displayName[0]}</Avatar></NavLink> : null}
-                {!user ? <NavLink style={{ textDecoration: 'none' }} to='/login'><Button sx={{ margin: '20px' }} onClick={newPage} variant="contained" >Login</Button> </NavLink> : <Button sx={{ margin: '20px' }} color="warning" onClick={logoutClient} variant="contained" >Logout</Button>}
-                {!user ? <NavLink style={{ textDecoration: 'none' }} to='/registration'><Button sx={{ margin: '20px' }} onClick={newPage} variant="contained" >Register</Button> </NavLink> : null}
+
+                <ButtonGroup padding='0px'>
+                    <Button onClick={toggleState} >
+                        {user && user.photoURL ? <Avatar sx={{ margin: '20px', maxWidth: '64px' }} src={user.photoURL} /> : user && user.displayName ? <Avatar>{user.displayName[0]}</Avatar> : <Avatar>G</Avatar>}
+                    </Button>
+                    <Popper
+                        open={itemOpen}
+                        sx={{
+                            zIndex: 1,
+
+
+                        }}
+                        anchorEl={anchorRef}
+                        placement='bottom'
+                        transition>
+                        {({ TransitionProps }) => (
+                            <Fade {...TransitionProps} timeout={350}>
+                                <Paper sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column'
+                                }}>
+                                    {!user ? <Button onClick={() => { goToPage('registration') }} >Register</Button> : <Button onClick={() => { goToPage('profile') }}>Profile</Button>}
+                                    {!user ? <Button onClick={() => { goToPage('login') }} >Login</Button> : <Button onClick={() => { goToPage('logout') }} >Logout</Button>}
+                                </Paper>
+                            </Fade>
+                        )}
+
+
+                    </Popper>
+
+
+                </ButtonGroup>
+
+
+
             </Box>
 
         </Paper>
